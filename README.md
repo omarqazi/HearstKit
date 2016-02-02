@@ -9,7 +9,8 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
+## Description
+HearstKit is a swift client for Hearst. It can connect to Hearst servers via HTTP or WebSocket and exchange messages across multiple threads in real time
 
 ## Installation
 
