@@ -13,6 +13,10 @@ public class Mailbox {
     public var privateKey: SecKey?
     public var publicKey: SecKey?
     
+    public init() {
+        
+    }
+    
     public func generatePrivateKey(privateTag: String,publicTag: String) -> OSStatus {
         var pubKey, privKey: SecKey?
         
