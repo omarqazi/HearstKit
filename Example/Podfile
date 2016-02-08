@@ -1,13 +1,16 @@
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
+pod 'Alamofire'
+pod 'Starscream'
+pod 'SwiftyJSON'
+
 target 'HearstKit_Example', :exclusive => true do
   pod 'HearstKit', :path => '../'
 end
 
 target 'HearstKit_Tests', :exclusive => true do
   pod 'HearstKit', :path => '../'
-
   pod 'Quick', '~> 0.8.0'
   pod 'Nimble', '3.0.0'
   pod 'FBSnapshotTestCase'
