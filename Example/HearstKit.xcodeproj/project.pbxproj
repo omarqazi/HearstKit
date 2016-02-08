@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		070C3ECB1C61736D005A18C5 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECA1C61736D005A18C5 /* Message.swift */; };
-		070C3ECD1C61737D005A18C5 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECC1C61737D005A18C5 /* Mailbox.swift */; };
-		070C3ECF1C617395005A18C5 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECE1C617395005A18C5 /* Thread.swift */; };
-		070C3ED11C6173A0005A18C5 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ED01C6173A0005A18C5 /* Member.swift */; };
 		07CB25221C680E760051A974 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CB25211C680E760051A974 /* Security.framework */; };
 		07CB25251C680F990051A974 /* MailboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB25241C680F990051A974 /* MailboxTest.swift */; };
-		07CB25261C6810240051A974 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECA1C61736D005A18C5 /* Message.swift */; };
-		07CB25271C6810240051A974 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECC1C61737D005A18C5 /* Mailbox.swift */; };
-		07CB25281C6810240051A974 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECE1C617395005A18C5 /* Thread.swift */; };
-		07CB25291C6810240051A974 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ED01C6173A0005A18C5 /* Member.swift */; };
+		07E980741C682D3800E8BB56 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980701C682D3800E8BB56 /* Mailbox.swift */; };
+		07E980751C682D3800E8BB56 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980701C682D3800E8BB56 /* Mailbox.swift */; };
+		07E980761C682D3800E8BB56 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980711C682D3800E8BB56 /* Member.swift */; };
+		07E980771C682D3800E8BB56 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980711C682D3800E8BB56 /* Member.swift */; };
+		07E980781C682D3800E8BB56 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980721C682D3800E8BB56 /* Message.swift */; };
+		07E980791C682D3800E8BB56 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980721C682D3800E8BB56 /* Message.swift */; };
+		07E9807A1C682D3800E8BB56 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980731C682D3800E8BB56 /* Thread.swift */; };
+		07E9807B1C682D3800E8BB56 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980731C682D3800E8BB56 /* Thread.swift */; };
 		13E5F7FDB091E51581167277 /* Pods_HearstKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491AFD7FA5762A8DFBCFE929 /* Pods_HearstKit_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -37,13 +37,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		070C3ECA1C61736D005A18C5 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Message.swift; path = ../Message.swift; sourceTree = "<group>"; };
-		070C3ECC1C61737D005A18C5 /* Mailbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mailbox.swift; path = ../Mailbox.swift; sourceTree = "<group>"; };
-		070C3ECE1C617395005A18C5 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Thread.swift; path = ../Thread.swift; sourceTree = "<group>"; };
-		070C3ED01C6173A0005A18C5 /* Member.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Member.swift; path = ../Member.swift; sourceTree = "<group>"; };
 		07CB25211C680E760051A974 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		07CB25231C680F990051A974 /* HearstKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HearstKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		07CB25241C680F990051A974 /* MailboxTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MailboxTest.swift; path = ../../Tests/MailboxTest.swift; sourceTree = "<group>"; };
+		07E980701C682D3800E8BB56 /* Mailbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mailbox.swift; path = ../Pod/Classes/Mailbox.swift; sourceTree = "<group>"; };
+		07E980711C682D3800E8BB56 /* Member.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Member.swift; path = ../Pod/Classes/Member.swift; sourceTree = "<group>"; };
+		07E980721C682D3800E8BB56 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Message.swift; path = ../Pod/Classes/Message.swift; sourceTree = "<group>"; };
+		07E980731C682D3800E8BB56 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Thread.swift; path = ../Pod/Classes/Thread.swift; sourceTree = "<group>"; };
 		0FED363AA19D7EA09D3BBAC0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		16973C27F60898529313195A /* Pods-HearstKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HearstKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HearstKit_Tests/Pods-HearstKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		2BCA6604FF249841E6E11B52 /* HearstKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HearstKit.podspec; path = ../HearstKit.podspec; sourceTree = "<group>"; };
@@ -88,10 +88,10 @@
 		070C3EC91C6172C5005A18C5 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				070C3ECA1C61736D005A18C5 /* Message.swift */,
-				070C3ECC1C61737D005A18C5 /* Mailbox.swift */,
-				070C3ECE1C617395005A18C5 /* Thread.swift */,
-				070C3ED01C6173A0005A18C5 /* Member.swift */,
+				07E980701C682D3800E8BB56 /* Mailbox.swift */,
+				07E980711C682D3800E8BB56 /* Member.swift */,
+				07E980721C682D3800E8BB56 /* Message.swift */,
+				07E980731C682D3800E8BB56 /* Thread.swift */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -389,12 +389,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				070C3ECD1C61737D005A18C5 /* Mailbox.swift in Sources */,
-				070C3ED11C6173A0005A18C5 /* Member.swift in Sources */,
-				070C3ECF1C617395005A18C5 /* Thread.swift in Sources */,
-				070C3ECB1C61736D005A18C5 /* Message.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				07E9807A1C682D3800E8BB56 /* Thread.swift in Sources */,
+				07E980741C682D3800E8BB56 /* Mailbox.swift in Sources */,
+				07E980781C682D3800E8BB56 /* Message.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				07E980761C682D3800E8BB56 /* Member.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,10 +402,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07CB25261C6810240051A974 /* Message.swift in Sources */,
-				07CB25271C6810240051A974 /* Mailbox.swift in Sources */,
-				07CB25281C6810240051A974 /* Thread.swift in Sources */,
-				07CB25291C6810240051A974 /* Member.swift in Sources */,
+				07E980751C682D3800E8BB56 /* Mailbox.swift in Sources */,
+				07E9807B1C682D3800E8BB56 /* Thread.swift in Sources */,
+				07E980791C682D3800E8BB56 /* Message.swift in Sources */,
+				07E980771C682D3800E8BB56 /* Member.swift in Sources */,
 				07CB25251C680F990051A974 /* MailboxTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
