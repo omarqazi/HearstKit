@@ -7,13 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		070C3ECB1C61736D005A18C5 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECA1C61736D005A18C5 /* Message.swift */; };
+		070C3ECD1C61737D005A18C5 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECC1C61737D005A18C5 /* Mailbox.swift */; };
+		070C3ECF1C617395005A18C5 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECE1C617395005A18C5 /* Thread.swift */; };
+		070C3ED11C6173A0005A18C5 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ED01C6173A0005A18C5 /* Member.swift */; };
+		07CB25221C680E760051A974 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CB25211C680E760051A974 /* Security.framework */; };
+		07CB25251C680F990051A974 /* MailboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB25241C680F990051A974 /* MailboxTest.swift */; };
+		07CB25261C6810240051A974 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECA1C61736D005A18C5 /* Message.swift */; };
+		07CB25271C6810240051A974 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECC1C61737D005A18C5 /* Mailbox.swift */; };
+		07CB25281C6810240051A974 /* Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ECE1C617395005A18C5 /* Thread.swift */; };
+		07CB25291C6810240051A974 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070C3ED01C6173A0005A18C5 /* Member.swift */; };
 		13E5F7FDB091E51581167277 /* Pods_HearstKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 491AFD7FA5762A8DFBCFE929 /* Pods_HearstKit_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		DD8F0EEEDEA50355CE6693E4 /* Pods_HearstKit_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79EFC0D581072D155D0C0416 /* Pods_HearstKit_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +37,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		070C3ECA1C61736D005A18C5 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Message.swift; path = ../Message.swift; sourceTree = "<group>"; };
+		070C3ECC1C61737D005A18C5 /* Mailbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Mailbox.swift; path = ../Mailbox.swift; sourceTree = "<group>"; };
+		070C3ECE1C617395005A18C5 /* Thread.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Thread.swift; path = ../Thread.swift; sourceTree = "<group>"; };
+		070C3ED01C6173A0005A18C5 /* Member.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Member.swift; path = ../Member.swift; sourceTree = "<group>"; };
+		07CB25211C680E760051A974 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		07CB25231C680F990051A974 /* HearstKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HearstKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
+		07CB25241C680F990051A974 /* MailboxTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MailboxTest.swift; path = ../../Tests/MailboxTest.swift; sourceTree = "<group>"; };
 		0FED363AA19D7EA09D3BBAC0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		16973C27F60898529313195A /* Pods-HearstKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HearstKit_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HearstKit_Tests/Pods-HearstKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		2BCA6604FF249841E6E11B52 /* HearstKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = HearstKit.podspec; path = ../HearstKit.podspec; sourceTree = "<group>"; };
@@ -42,7 +58,6 @@
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* HearstKit_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HearstKit_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		7534ED0F96D33C2FDC700B79 /* Pods-HearstKit_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HearstKit_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-HearstKit_Example/Pods-HearstKit_Example.release.xcconfig"; sourceTree = "<group>"; };
 		79EFC0D581072D155D0C0416 /* Pods_HearstKit_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HearstKit_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD7F3CB33829401A577C99A3 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
@@ -54,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07CB25221C680E760051A974 /* Security.framework in Frameworks */,
 				DD8F0EEEDEA50355CE6693E4 /* Pods_HearstKit_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -69,6 +85,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		070C3EC91C6172C5005A18C5 /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				070C3ECA1C61736D005A18C5 /* Message.swift */,
+				070C3ECC1C61737D005A18C5 /* Mailbox.swift */,
+				070C3ECE1C617395005A18C5 /* Thread.swift */,
+				070C3ED01C6173A0005A18C5 /* Member.swift */,
+			);
+			name = Client;
+			sourceTree = "<group>";
+		};
 		3012CE222EF526692D6663A1 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -83,12 +110,14 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				070C3EC91C6172C5005A18C5 /* Client */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for HearstKit */,
 				607FACE81AFB9204008FA782 /* Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				3012CE222EF526692D6663A1 /* Pods */,
 				BD74FADED8AA91633711129D /* Frameworks */,
+				07CB25231C680F990051A974 /* HearstKit_Tests-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -126,7 +155,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
+				07CB25241C680F990051A974 /* MailboxTest.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -153,6 +182,7 @@
 		BD74FADED8AA91633711129D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				07CB25211C680E760051A974 /* Security.framework */,
 				79EFC0D581072D155D0C0416 /* Pods_HearstKit_Example.framework */,
 				491AFD7FA5762A8DFBCFE929 /* Pods_HearstKit_Tests.framework */,
 			);
@@ -359,6 +389,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				070C3ECD1C61737D005A18C5 /* Mailbox.swift in Sources */,
+				070C3ED11C6173A0005A18C5 /* Member.swift in Sources */,
+				070C3ECF1C617395005A18C5 /* Thread.swift in Sources */,
+				070C3ECB1C61736D005A18C5 /* Message.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
@@ -368,7 +402,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				07CB25261C6810240051A974 /* Message.swift in Sources */,
+				07CB25271C6810240051A974 /* Mailbox.swift in Sources */,
+				07CB25281C6810240051A974 /* Thread.swift in Sources */,
+				07CB25291C6810240051A974 /* Member.swift in Sources */,
+				07CB25251C680F990051A974 /* MailboxTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +553,7 @@
 			baseConfigurationReference = E8BFFE4D0732E19B4665D344 /* Pods-HearstKit_Tests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -527,6 +566,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HearstKit_Tests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HearstKit_Example.app/HearstKit_Example";
 			};
 			name = Debug;
@@ -536,6 +577,7 @@
 			baseConfigurationReference = 16973C27F60898529313195A /* Pods-HearstKit_Tests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -544,6 +586,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HearstKit_Tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/HearstKit_Example.app/HearstKit_Example";
 			};
 			name = Release;
