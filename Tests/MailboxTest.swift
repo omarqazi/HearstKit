@@ -20,7 +20,7 @@ class MailboxTest: XCTestCase {
     
     func testGenerateKey() {
         let mb = Mailbox()
-        let stat = mb.generatePrivateKey("com.smick.hearstkit.tests.private",publicTag: "com.smick.hearstkit.tests.public")
+        let stat = mb.generatePrivateKey()
         XCTAssert(stat == errSecSuccess, "Expected status errSecSuccess but got \(stat)")
         XCTAssert(mb.privateKey != nil, "Expected private key to be generated but found nil")
         XCTAssert(mb.publicKey != nil, "Expected public key to be generated but found nil")
@@ -28,11 +28,11 @@ class MailboxTest: XCTestCase {
     
     func testGenerateKeyString() {
         let mb = Mailbox()
-        let stat = mb.generatePrivateKey("com.smick.hearstkit.tests.private",publicTag: "com.smick.hearstkit.tests.public")
+        let stat = mb.generatePrivateKey()
         XCTAssert(stat == errSecSuccess, "Expected status errSecSuccess but got \(stat)")
         
-        let pubKeyString = mb.keyToString("com.smick.hearstkit.tests.public")
-        let privateKeyString = mb.keyToString("com.smick.hearstkit.tests.private")
+        let pubKeyString = mb.keyToString()
+        let privateKeyString = mb.privateKeyToString()
         
         XCTAssert(!pubKeyString.containsString("error"), "Error generating string for public key: \(pubKeyString)")
         XCTAssert(!privateKeyString.containsString("error"), "Error generating string for private key: \(privateKeyString)")

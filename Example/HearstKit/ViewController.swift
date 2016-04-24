@@ -9,7 +9,8 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    private var xx = Connection(serverDomain: "chat.smick.co")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -21,8 +22,11 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        let xx = Connection(serverDomain: "chat.smick.co")
         xx.connect()
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        xx.disconnect()
     }
 
 }

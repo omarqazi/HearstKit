@@ -53,4 +53,9 @@ public class Connection {
         socket.connect()
         return true
     }
+    
+    public func disconnect() -> Bool {
+        self.socket.disconnect()
+        return true
+    }
 }

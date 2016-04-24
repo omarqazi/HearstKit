@@ -12,22 +12,24 @@ import Security
 public class Mailbox {
     public var privateKey: SecKey?
     public var publicKey: SecKey?
+    public var privateKeyTag: String = "hearst-default-private-key"
+    public var publicKeyTag: String = "hearst-default-public-key"
     public var uuid: String = ""
     
     public init() {
         
     }
     
-    public func generatePrivateKey(privateTag: String,publicTag: String) -> OSStatus {
+    public func generatePrivateKey() -> OSStatus {
         var pubKey, privKey: SecKey?
         
         let publicKeyParameters: [String: AnyObject] = [
             String(kSecAttrIsPermanent): true,
-            String(kSecAttrApplicationTag): publicTag
+            String(kSecAttrApplicationTag): self.publicKeyTag
         ]
         let privateKeyParameters: [String: AnyObject] = [
             String(kSecAttrIsPermanent): true,
-            String(kSecAttrApplicationTag): privateTag
+            String(kSecAttrApplicationTag): self.privateKeyTag
         ]
         let parameters: [String: AnyObject] = [
             String(kSecAttrKeyType): kSecAttrKeyTypeRSA,
@@ -48,13 +50,21 @@ public class Mailbox {
         return rv
     }
     
-    public func keyToString(pubKeyTag: String) -> String {
+    public func keyToString() -> String {
+        return self.taggedKeyToString(self.publicKeyTag)
+    }
+    
+    internal func privateKeyToString() -> String {
+        return self.taggedKeyToString(self.privateKeyTag)
+    }
+    
+    public func taggedKeyToString(keyTag: String) -> String {
         var dataPointer: AnyObject?
         let query: [String : AnyObject] = [
             String(kSecClass): kSecClassKey,
-            String(kSecAttrApplicationTag): pubKeyTag,
+            String(kSecAttrApplicationTag): keyTag,
             String(kSecReturnData): kCFBooleanTrue,
-        ]
+            ]
         
         let qresult = SecItemCopyMatching(query, &dataPointer)
         
