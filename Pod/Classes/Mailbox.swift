@@ -12,6 +12,7 @@ import Security
 public class Mailbox {
     public var privateKey: SecKey?
     public var publicKey: SecKey?
+    public var uuid: String = ""
     
     public init() {
         

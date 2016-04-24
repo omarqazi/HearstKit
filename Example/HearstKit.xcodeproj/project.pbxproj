@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		067D0EB73A27F9D46B79FA37 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D282CC9E96FB596B6898E77 /* Pods.framework */; };
+		0768DC3D1CCD42600048D956 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3C1CCD42600048D956 /* Authentication.swift */; };
+		0768DC3E1CCD42600048D956 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3C1CCD42600048D956 /* Authentication.swift */; };
+		0768DC401CCD42BA0048D956 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3F1CCD42BA0048D956 /* Connection.swift */; };
+		0768DC411CCD42BA0048D956 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3F1CCD42BA0048D956 /* Connection.swift */; };
 		07CB25221C680E760051A974 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07CB25211C680E760051A974 /* Security.framework */; };
 		07CB25251C680F990051A974 /* MailboxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB25241C680F990051A974 /* MailboxTest.swift */; };
 		07E980741C682D3800E8BB56 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E980701C682D3800E8BB56 /* Mailbox.swift */; };
@@ -38,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0768DC3C1CCD42600048D956 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Authentication.swift; path = ../Pod/Classes/Authentication.swift; sourceTree = "<group>"; };
+		0768DC3F1CCD42BA0048D956 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = ../Pod/Classes/Connection.swift; sourceTree = "<group>"; };
 		07CB25211C680E760051A974 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		07CB25231C680F990051A974 /* HearstKit_Tests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HearstKit_Tests-Bridging-Header.h"; sourceTree = "<group>"; };
 		07CB25241C680F990051A974 /* MailboxTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MailboxTest.swift; path = ../../Tests/MailboxTest.swift; sourceTree = "<group>"; };
@@ -95,6 +101,8 @@
 				07E980711C682D3800E8BB56 /* Member.swift */,
 				07E980721C682D3800E8BB56 /* Message.swift */,
 				07E980731C682D3800E8BB56 /* Thread.swift */,
+				0768DC3C1CCD42600048D956 /* Authentication.swift */,
+				0768DC3F1CCD42BA0048D956 /* Connection.swift */,
 			);
 			name = Client;
 			sourceTree = "<group>";
@@ -393,8 +401,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0768DC3D1CCD42600048D956 /* Authentication.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				07E9807A1C682D3800E8BB56 /* Thread.swift in Sources */,
+				0768DC401CCD42BA0048D956 /* Connection.swift in Sources */,
 				07E980741C682D3800E8BB56 /* Mailbox.swift in Sources */,
 				07E980781C682D3800E8BB56 /* Message.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
@@ -411,6 +421,8 @@
 				07E980791C682D3800E8BB56 /* Message.swift in Sources */,
 				07E980771C682D3800E8BB56 /* Member.swift in Sources */,
 				07CB25251C680F990051A974 /* MailboxTest.swift in Sources */,
+				0768DC3E1CCD42600048D956 /* Authentication.swift in Sources */,
+				0768DC411CCD42BA0048D956 /* Connection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,7 +546,7 @@
 				INFOPLIST_FILE = HearstKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shoponspree.heastkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -547,7 +559,7 @@
 				INFOPLIST_FILE = HearstKit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shoponspree.heastkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
