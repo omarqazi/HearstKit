@@ -14,6 +14,9 @@ public class Connection {
     public var socket: WebSocket
     private var connectionStarted = false
     public var auth: Authentication = Authentication()
+    public var onConnect: ((Void) -> Void)?
+    public var onDisconnect: ((NSError?) -> Void)?
+    public var onText: ((String) -> Void)?
     
     
     init(serverDomain: String) {

@@ -8,13 +8,21 @@
 
 import Foundation
 import Security
+import SwiftyJSON
+
+let jsonDateFormatter = NSDateFormatter()
 
 public class Mailbox {
     public var privateKey: SecKey?
     public var publicKey: SecKey?
-    public var privateKeyTag: String = "hearst-default-private-key"
-    public var publicKeyTag: String = "hearst-default-public-key"
+    public var privateKeyTag: String = "co.smick.hearst.defaultkey.private"
+    public var publicKeyTag: String = "co.smick.hearst.defaultkey.public"
     public var uuid: String = ""
+    public var deviceId: String = ""
+    public var connectedAt: NSDate = NSDate.distantPast()
+    public var createdAt: NSDate = NSDate.distantPast()
+    public var updatedAt: NSDate = NSDate.distantPast()
+    
     
     public init() {
         
@@ -78,5 +86,39 @@ public class Mailbox {
         }
         
         return "internal error"
+    }
+    
+    public func parse(jsonData: NSData) {
+        let obj = JSON(data: jsonData)
+        
+        if let uuid = obj["Id"].string {
+            self.uuid = uuid
+        }
+    }
+    
+    // func payloadData returns a serialized NSData representation of the object
+    // Serialization format is json
+    public func payloadData() -> NSData {
+        jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
+        let payload: [String : AnyObject] = [
+            "Id" : self.uuid,
+            "PublicKey" : self.keyToString(),
+            "DeviceId" : self.deviceId,
+            "ConnectedAt" : jsonDateFormatter.stringFromDate(self.connectedAt),
+        ]
+        
+        var jsonData: NSData?
+        do {
+            jsonData = try NSJSONSerialization.dataWithJSONObject(payload, options: [])
+        } catch {
+            jsonData = NSData()
+        }
+        
+        return jsonData!
+    }
+    
+    // Returns payloadData() as a string by assuming UTF8 string encoding type and JSON
+    public func payload() -> String {
+        return String(data: self.payloadData(), encoding: NSUTF8StringEncoding)!
     }
 }

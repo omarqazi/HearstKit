@@ -43,4 +43,21 @@ class MailboxTest: XCTestCase {
         XCTAssert(privateKeyLength > pubKeyLength, "Expected private key to be bigger than public key")
     }
     
+    func testPayload() {
+        let mb = Mailbox()
+        mb.uuid = "ayy-lmao"
+        let xx = mb.payload()
+        
+        XCTAssert(xx.containsString(mb.uuid), xx)
+    }
+    
+    func testParse() {
+        let mb = Mailbox()
+        mb.uuid = "some-uuid"
+        let payload = mb.payloadData()
+        let mbx = Mailbox()
+        mbx.parse(payload)
+        XCTAssert(mbx.uuid == mb.uuid,"Expected Mailbox to parse UUID")
+    }
+    
 }

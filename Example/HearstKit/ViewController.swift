@@ -22,6 +22,10 @@ class ViewController: UIViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
+        let rz = Mailbox()
+        rz.uuid = "hello-world"
+        rz.deviceId = "hey"
+        print(rz.payload())
         xx.connect()
     }
     
