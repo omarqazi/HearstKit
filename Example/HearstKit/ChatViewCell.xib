@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" reuseIdentifier="ChatCell" rowHeight="75" id="KGk-i7-Jjw" customClass="ChatViewCell" customModule="SmickChat" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="75"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="75"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Some Dude" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ee1-WG-Y0H">
+                        <rect key="frame" x="84" y="7" width="93" height="21"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Whats up man" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Df9-bF-ax5">
+                        <rect key="frame" x="84" y="30" width="228" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="38" id="4nK-Qf-wqh"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="1" id="R7z-Xm-eSv"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="jA9-RP-Y0o"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="4nK-Qf-wqh"/>
+                            </mask>
+                        </variation>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Just Now" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Hh-fi-Mx0">
+                        <rect key="frame" x="246" y="5" width="66" height="21"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="TeU-HE-kxW">
+                        <rect key="frame" x="8" y="5" width="65" height="65"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="65" id="9ad-zP-Gex"/>
+                            <constraint firstAttribute="height" constant="75" id="9jT-7D-mtZ"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="9jT-7D-mtZ"/>
+                            </mask>
+                        </variation>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="1Hh-fi-Mx0" firstAttribute="trailing" secondItem="ee1-WG-Y0H" secondAttribute="trailing" constant="135" id="4t3-TA-Nny"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="trailing" secondItem="ee1-WG-Y0H" secondAttribute="trailing" constant="135" id="7oP-zQ-7t1"/>
+                    <constraint firstItem="1Hh-fi-Mx0" firstAttribute="trailing" secondItem="Df9-bF-ax5" secondAttribute="trailing" id="BCc-sP-5hT"/>
+                    <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="Df9-bF-ax5" secondAttribute="bottom" constant="-2" id="BSV-DJ-CS5"/>
+                    <constraint firstItem="TeU-HE-kxW" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="D5J-ih-5rf"/>
+                    <constraint firstItem="1Hh-fi-Mx0" firstAttribute="leading" secondItem="ee1-WG-Y0H" secondAttribute="trailing" constant="69" id="EZb-2P-nvW"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="ee1-WG-Y0H" secondAttribute="bottom" constant="38.5" id="Eb9-0J-gOJ"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="KMv-BX-2Fh"/>
+                    <constraint firstItem="ee1-WG-Y0H" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-1" id="Lhf-9X-oyb"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="leading" secondItem="TeU-HE-kxW" secondAttribute="trailing" constant="11" id="NEG-R2-tBh"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="top" secondItem="ee1-WG-Y0H" secondAttribute="bottom" constant="2" id="TQn-5D-pz6"/>
+                    <constraint firstItem="1Hh-fi-Mx0" firstAttribute="top" secondItem="TeU-HE-kxW" secondAttribute="top" id="UI2-3h-xzK"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="top" secondItem="1Hh-fi-Mx0" secondAttribute="bottom" constant="6" id="bDg-E6-I5l"/>
+                    <constraint firstItem="ee1-WG-Y0H" firstAttribute="leading" secondItem="TeU-HE-kxW" secondAttribute="trailing" constant="11" id="eXq-FD-DJ5"/>
+                    <constraint firstItem="TeU-HE-kxW" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ghm-jc-5eC"/>
+                    <constraint firstItem="TeU-HE-kxW" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="ovm-Ee-LWl"/>
+                    <constraint firstItem="Df9-bF-ax5" firstAttribute="top" secondItem="1Hh-fi-Mx0" secondAttribute="bottom" constant="4" id="sn9-SO-JoJ"/>
+                </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="bDg-E6-I5l"/>
+                        <exclude reference="4t3-TA-Nny"/>
+                    </mask>
+                </variation>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="dateField" destination="1Hh-fi-Mx0" id="DAC-cC-dgE"/>
+                <outlet property="messageBodyField" destination="Df9-bF-ax5" id="d91-Y1-ka5"/>
+                <outlet property="senderNameField" destination="ee1-WG-Y0H" id="lVP-lb-GKD"/>
+                <outlet property="userImageView" destination="TeU-HE-kxW" id="Ax4-wa-qrD"/>
+            </connections>
+            <point key="canvasLocation" x="413" y="348.5"/>
+        </tableViewCell>
+    </objects>
+</document>

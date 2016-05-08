@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FBSDKCoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,8 +16,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        self.registerUserNotificationSettings(application)
+        application.registerForRemoteNotifications()
         return true
+    }
+    
+    
+    func registerUserNotificationSettings(application: UIApplication) {
+        let newMessageCategory = UIMutableUserNotificationCategory()
+        newMessageCategory.identifier = "chat-message"
+        
+        let thumbsUpAction = UIMutableUserNotificationAction()
+        thumbsUpAction.identifier = "thumbs-up"
+        thumbsUpAction.title = "👍"
+        thumbsUpAction.activationMode = UIUserNotificationActivationMode.Background
+        thumbsUpAction.authenticationRequired = false
+        
+        let replyAction = UIMutableUserNotificationAction()
+        replyAction.identifier = "reply-with-message"
+        replyAction.title = "Reply"
+        replyAction.activationMode = UIUserNotificationActivationMode.Background
+        replyAction.authenticationRequired = false
+        if #available(iOS 9.0, *) {
+            replyAction.behavior = UIUserNotificationActionBehavior.TextInput
+            replyAction.parameters = [UIUserNotificationTextInputActionButtonTitleKey : "Reply"]
+        } else {
+            // No text replies on older iOS versions
+        }
+        
+        
+        newMessageCategory.setActions([thumbsUpAction,replyAction], forContext: .Default)
+        newMessageCategory.setActions([thumbsUpAction,replyAction], forContext: .Minimal)
+        let notificationSettings = UIUserNotificationSettings(forTypes: [.Alert,.Sound,.Badge], categories: [newMessageCategory])
+        application.registerUserNotificationSettings(notificationSettings)
     }
 
     func applicationWillResignActive(application: UIApplication) {
@@ -33,12 +66,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
+        print("did register user notification settings")
+    }
+    
+    func application(application: UIApplication, handleActionWithIdentifier identifier: String?, forRemoteNotification userInfo: [NSObject : AnyObject], completionHandler: () -> Void) {
+        print(userInfo)
+    }
+    
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        print("failed to register for remote notifications",error)
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        print("Got notification",userInfo)
+    }
+    
+    func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
+        print(deviceToken)
+    }
+    
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        return FBSDKApplicationDelegate.sharedInstance().application(application, openURL: url, sourceApplication: sourceApplication, annotation: annotation)
+    }
+    
+    func applicationDidBecomeActive(application: UIApplication) {
+        FBSDKAppEvents.activateApp()
     }
 
 

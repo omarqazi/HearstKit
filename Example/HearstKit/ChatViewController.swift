@@ -1,6 +1,6 @@
 //
 //  ChatViewController.swift
-//  SmickChat
+//  HearstChat
 //
 //  Created by Omar Qazi on 1/30/16.
 //  Copyright © 2016 BQE Software. All rights reserved.
@@ -32,13 +32,13 @@ class ChatViewController: SLKTextViewController {
     
     var connecting = false
     
-    required init!(coder decoder: NSCoder!) {
+    required init(coder decoder: NSCoder) {
         super.init(tableViewStyle: .Plain)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tableView.registerNib(UINib(nibName: "ChatViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
+        self.tableView?.registerNib(UINib(nibName: "ChatViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
     }
     
     override func didReceiveMemoryWarning() {
@@ -73,7 +73,7 @@ class ChatViewController: SLKTextViewController {
             self.setTextInputbarHidden(true, animated: false)
         }
         
-        self.title = "Smick Chat"
+        self.title = "Hearst Chat"
         self.inverted = false
         self.textInputbar.textView.placeholder = "Type some shit"
         self.keyboardPanningEnabled = true
@@ -176,7 +176,7 @@ class ChatViewController: SLKTextViewController {
     
     
     func attemptConnection() -> Bool {
-        Alamofire.request(.GET, "https://www.smick.tv/auth/smickchat").responseJSON { response in
+        Alamofire.request(.GET, "https://www.smick.tv/auth/hearstchat").responseJSON { response in
             if let responseJson = response.result.value {
                 self.mailboxId = responseJson["mailbox_id"] as! String
                 self.threadId = responseJson["thread_id"] as! String
@@ -223,7 +223,7 @@ class ChatViewController: SLKTextViewController {
                 newMessage.parse(message)
                 if newMessage.body != nil && !newMessage.body!.isEmpty {
                     if newMessage.senderName != nil {
-                        self.typingIndicatorView.removeUsername(newMessage.senderName!)
+                        self.typingIndicatorView?.removeUsername(newMessage.senderName!)
                     }
                     self.appendNewMessage(newMessage,addToBottom: bottomAdd)
                     actualMessageAdded = true
@@ -232,9 +232,9 @@ class ChatViewController: SLKTextViewController {
                         if let sendName = newMessage.senderName {
                             if sendName != self.facebookUserName {
                                 if isTyping == "true" {
-                                    self.typingIndicatorView.insertUsername(sendName)
+                                    self.typingIndicatorView?.insertUsername(sendName)
                                 } else if isTyping == "false" {
-                                    self.typingIndicatorView.removeUsername(sendName)
+                                    self.typingIndicatorView?.removeUsername(sendName)
                                 }
                             }
                         }
@@ -340,11 +340,11 @@ class ChatViewController: SLKTextViewController {
         let willChange = (status == SLKKeyboardStatus.WillShow || status == SLKKeyboardStatus.WillHide)
         let didChange = (status == SLKKeyboardStatus.DidShow || status == SLKKeyboardStatus.DidHide)
         if willChange {
-            let lastVisibleIndexPath = self.tableView.indexPathsForVisibleRows?.last
+            let lastVisibleIndexPath = self.tableView?.indexPathsForVisibleRows?.last
             self.bottomRow = lastVisibleIndexPath
         } else if didChange && self.bottomRow != nil {
             if !self.lockScrolling {
-                self.tableView.scrollToRowAtIndexPath(bottomRow!, atScrollPosition: .Bottom, animated: true)
+                self.tableView?.scrollToRowAtIndexPath(bottomRow!, atScrollPosition: .Bottom, animated: true)
             }
         }
     }
