@@ -1,6 +1,0 @@
-framework module HearstKit {
-  umbrella header "HearstKit-umbrella.h"
-
-  export *
-  module * { export * }
-}

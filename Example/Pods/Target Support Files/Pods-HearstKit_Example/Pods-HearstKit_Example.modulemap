@@ -1,6 +1,0 @@
-framework module Pods_HearstKit_Example {
-  umbrella header "Pods-HearstKit_Example-umbrella.h"
-
-  export *
-  module * { export * }
-}
