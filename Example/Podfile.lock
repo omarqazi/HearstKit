@@ -1,5 +1,15 @@
 PODS:
   - Alamofire (3.2.0)
+  - Bolts (1.7.0):
+    - Bolts/AppLinks (= 1.7.0)
+    - Bolts/Tasks (= 1.7.0)
+  - Bolts/AppLinks (1.7.0):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.7.0)
+  - FBSDKCoreKit (4.11.0):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.11.0):
+    - FBSDKCoreKit
   - HearstKit (0.1.0):
     - Alamofire
     - Starscream
@@ -10,6 +20,8 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - FBSDKCoreKit
+  - FBSDKLoginKit
   - HearstKit (from `../`)
   - SlackTextViewController
   - Starscream
@@ -21,6 +33,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 4da478599fccddff361205c8929333d7fe18dceb
+  Bolts: a0058fa3b331c5a1e4402d534f2dae36dbff31e4
+  FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
+  FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
   HearstKit: 0c0bee719cbbe5702149602d0b29db63251e104f
   SlackTextViewController: bd2a34c188d4f7dec93cf42388f38551263fac82
   Starscream: d74dd8d122a6abd244d8d5e51f32891c796d0827

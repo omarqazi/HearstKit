@@ -93,6 +93,26 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>07AB74031CDFD2B800ED88A3</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.swift</string>
+			<key>path</key>
+			<string>ChatViewController.swift</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>07AB74041CDFD2B800ED88A3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>07AB74031CDFD2B800ED88A3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>07CB25211C680E760051A974</key>
 		<dict>
 			<key>isa</key>
@@ -497,6 +517,7 @@
 				<string>07E980741C682D3800E8BB56</string>
 				<string>07E980781C682D3800E8BB56</string>
 				<string>607FACD61AFB9204008FA782</string>
+				<string>07AB74041CDFD2B800ED88A3</string>
 				<string>07E980761C682D3800E8BB56</string>
 			</array>
 			<key>isa</key>
@@ -594,6 +615,7 @@
 			<key>children</key>
 			<array>
 				<string>607FACD51AFB9204008FA782</string>
+				<string>07AB74031CDFD2B800ED88A3</string>
 				<string>607FACD71AFB9204008FA782</string>
 				<string>607FACD91AFB9204008FA782</string>
 				<string>607FACDC1AFB9204008FA782</string>

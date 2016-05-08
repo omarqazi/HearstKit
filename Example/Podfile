@@ -5,6 +5,8 @@ pod 'Alamofire'
 pod 'Starscream'
 pod 'SwiftyJSON'
 pod 'SlackTextViewController'
+pod 'FBSDKCoreKit'
+pod 'FBSDKLoginKit'
 
 target 'HearstKit_Example', :exclusive => true do
   pod 'HearstKit', :path => '../'
