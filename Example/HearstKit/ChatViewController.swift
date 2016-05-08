@@ -100,7 +100,7 @@ class ChatViewController: SLKTextViewController {
         if !sentTypingIndicatorRecently && !textView.text.isEmpty {
             sentTypingIndicatorRecently = true
             self.sendTypingNotification(true)
-            NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: "typingNotificationNoLongerRecent:", userInfo: nil, repeats: false)
+            NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChatViewController.typingNotificationNoLongerRecent(_:)), userInfo: nil, repeats: false)
         } else if textView.text.isEmpty {
             self.sendTypingNotification(false)
             sentTypingIndicatorRecently = false
@@ -281,7 +281,7 @@ class ChatViewController: SLKTextViewController {
         self.lockScrolling = false
     }
     
-    override func scrollViewDidScroll(scrollView: UIScrollView!) {
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
         super.scrollViewDidScroll(scrollView)
         if !self.textView.isFirstResponder() {
             return
@@ -289,7 +289,7 @@ class ChatViewController: SLKTextViewController {
         
         self.lockScrolling = true
         self.scrollLockTimer?.invalidate()
-        self.scrollLockTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: "removeScrollLock:", userInfo: nil, repeats: false)
+        self.scrollLockTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: #selector(ChatViewController.removeScrollLock(_:)), userInfo: nil, repeats: false)
         
         lastOffsets.append(Float(scrollView.contentOffset.y))
         

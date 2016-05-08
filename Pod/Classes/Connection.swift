@@ -72,8 +72,16 @@ public class Connection {
         return true
     }
     
-    public func createObject(modelClass: String) {
-        self.socket.writeString("{\"action\":\"create\",\"model\":\"\(modelClass)\"}")
-        self.socket.writeString("{\"Subject\":\"HEARST FUCKING KIT\"}")
+    public func sendCommand(command: [String : AnyObject]) -> Bool {
+        do {
+            let jsonData = try NSJSONSerialization.dataWithJSONObject(command, options: [])
+            let jsonString = String(data: jsonData, encoding: NSUTF8StringEncoding)
+            self.socket.writeString(jsonString!)
+            return true
+        } catch {
+            return false
+        }
+
     }
+
 }
