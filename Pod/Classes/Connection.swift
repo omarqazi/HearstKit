@@ -31,14 +31,24 @@ public class Connection {
         
         socket.onConnect = {
             self.socket.writeString(self.auth.socketAuthenticationRequest())
+            if let oc = self.onConnect {
+                oc()
+            }
             print("websocket is connected")
         }
         
         socket.onDisconnect = { (error: NSError?) in
+            if let odc = self.onDisconnect {
+                odc(error)
+            }
             print("websocket is disconnected: \(error?.localizedDescription)")
+            
         }
         
         socket.onText = { (text: String) in
+            if let otxt = self.onText {
+                otxt(text)
+            }
             let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
             let json = JSON(data: jsonData!)
             print(json)
@@ -60,5 +70,10 @@ public class Connection {
     public func disconnect() -> Bool {
         self.socket.disconnect()
         return true
+    }
+    
+    public func createObject(modelClass: String) {
+        self.socket.writeString("{\"action\":\"create\",\"model\":\"\(modelClass)\"}")
+        self.socket.writeString("{\"Subject\":\"HEARST FUCKING KIT\"}")
     }
 }

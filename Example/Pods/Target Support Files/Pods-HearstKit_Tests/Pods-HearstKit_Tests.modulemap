@@ -1,0 +1,6 @@
+framework module Pods_HearstKit_Tests {
+  umbrella header "Pods-HearstKit_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -4,6 +4,7 @@ use_frameworks!
 pod 'Alamofire'
 pod 'Starscream'
 pod 'SwiftyJSON'
+pod 'SlackTextViewController'
 
 target 'HearstKit_Example', :exclusive => true do
   pod 'HearstKit', :path => '../'

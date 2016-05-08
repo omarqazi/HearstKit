@@ -25,7 +25,12 @@ class ViewController: UIViewController {
         let rz = Mailbox()
         rz.uuid = "hello-world"
         rz.deviceId = "hey"
-        print(rz.payload())
+        
+        xx.onConnect = {
+            print("YE NIGGA")
+            self.xx.createObject("thread")
+        }
+        
         xx.connect()
     }
     

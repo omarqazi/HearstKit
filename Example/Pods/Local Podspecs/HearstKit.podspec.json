@@ -1,0 +1,36 @@
+{
+  "name": "HearstKit",
+  "version": "0.1.0",
+  "summary": "A short description of HearstKit.",
+  "description": "",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/HearstKit",
+  "license": "MIT",
+  "authors": {
+    "Omar Qazi": "omar@bqe.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/HearstKit.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/Classes/**/*",
+  "resource_bundles": {
+    "HearstKit": [
+      "Pod/Assets/*.png"
+    ]
+  },
+  "dependencies": {
+    "Alamofire": [
+
+    ],
+    "Starscream": [
+
+    ],
+    "SwiftyJSON": [
+
+    ]
+  }
+}
