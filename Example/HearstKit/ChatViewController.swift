@@ -18,6 +18,7 @@ class ChatViewController: SLKTextViewController {
     @IBOutlet weak var aButtonItem: UIBarButtonItem?
     var messages = [HearstMessage]()
     var socket = WebSocket(url: NSURL(string: "wss://chat.smick.co/socket/")!)
+    var chatServer = Connection(serverDomain: "chat.smick.co")
     var mailboxId = ""
     var threadId = ""
     var sessionToken = ""
@@ -84,6 +85,13 @@ class ChatViewController: SLKTextViewController {
             self.attemptConnection()
         }
         
+        self.chatServer.onConnect = {
+            print("Connected using HearstKit")
+        }
+        
+        self.chatServer.onText = { msg in
+            print("HearstKit got message:", msg)
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -181,6 +189,13 @@ class ChatViewController: SLKTextViewController {
                 self.mailboxId = responseJson["mailbox_id"] as! String
                 self.threadId = responseJson["thread_id"] as! String
                 self.sessionToken = responseJson["session_token"] as! String
+                
+                let authStrategy = Authentication()
+                authStrategy.strategy = .Session
+                authStrategy.mailboxId = responseJson["mailbox_id"] as! String
+                authStrategy.sessionToken = responseJson["session_token"] as! String
+                self.chatServer.auth = authStrategy
+                self.chatServer.connect()
                 
                 self.connectToHearst(self.mailboxId, threadId: self.threadId, sessionToken: self.sessionToken)
             }

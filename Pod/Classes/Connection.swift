@@ -72,7 +72,7 @@ public class Connection {
         return true
     }
     
-    public func sendCommand(command: [String : AnyObject]) -> Bool {
+    public func sendObject(command: AnyObject) -> Bool {
         do {
             let jsonData = try NSJSONSerialization.dataWithJSONObject(command, options: [])
             let jsonString = String(data: jsonData, encoding: NSUTF8StringEncoding)
@@ -81,7 +81,27 @@ public class Connection {
         } catch {
             return false
         }
-
     }
-
+    
+    public func createModel(modelName: String,payload: AnyObject) {
+        let command = ["action" : "create", "model" : modelName]
+        self.sendObject(command)
+        self.sendObject(payload)
+    }
+    
+    public func createMailbox(mb: Mailbox) {
+        self.createModel("mailbox", payload: mb.serverRepresentation())
+    }
+    
+    public func createThread(tr: Thread) {
+        self.createModel("thread", payload: tr.serverRepresentation())
+    }
+    
+    public func createMember(mem: Member) {
+        self.createModel("threadmember", payload: mem.serverRepresentation())
+    }
+    
+    public func createMessage(msg: Message) {
+        self.createModel("message", payload: msg.serverRepresentation())
+    }
 }

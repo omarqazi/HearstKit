@@ -96,6 +96,16 @@ public class Mailbox {
         }
     }
     
+    public func serverRepresentation() -> [String : AnyObject] {
+        let payload = [
+            "Id" : self.uuid,
+            "PublicKey" : self.keyToString(),
+            "DeviceId" : self.deviceId,
+            "ConnectedAt" : jsonDateFormatter.stringFromDate(self.connectedAt)
+        ]
+        return payload
+    }
+    
     // func payloadData returns a serialized NSData representation of the object
     // Serialization format is json
     public func payloadData() -> NSData {
