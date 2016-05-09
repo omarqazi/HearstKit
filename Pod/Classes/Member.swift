@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 public class Member {
     public var threadId: String = ""
@@ -14,6 +15,11 @@ public class Member {
     public var allowRead: Bool = false
     public var allowWrite: Bool = false
     public var allowNotification: Bool = false
+    
+    public convenience init(json: JSON) {
+        self.init()
+        self.parse(json)
+    }
     
     public func serverRepresentation() -> [String : AnyObject] {
         let payload: [String : AnyObject] = [
@@ -25,5 +31,27 @@ public class Member {
         ]
         
         return payload
+    }
+    
+    public func parse(json: JSON) {
+        if let threadId = json["ThreadId"].string {
+            self.threadId = threadId
+        }
+        
+        if let mailboxId = json["MailboxId"].string {
+            self.mailboxId = mailboxId
+        }
+        
+        if let allowRead = json["AllowRead"].bool {
+            self.allowRead = allowRead
+        }
+        
+        if let allowWrite = json["AllowWrite"].bool {
+            self.allowWrite = allowWrite
+        }
+        
+        if let allowNotification = json["AllowNotification"].bool {
+            self.allowNotification = allowNotification
+        }
     }
 }

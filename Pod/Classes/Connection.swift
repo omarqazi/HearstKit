@@ -74,6 +74,13 @@ public class Connection {
             objectId = json["rid"].string
         }
         if objectId == nil {
+            let threadId = json["ThreadId"].string
+            let mailboxId = json["MailboxId"].string
+            if threadId != nil && mailboxId != nil {
+                objectId = "\(threadId)-\(mailboxId)"
+            }
+        }
+        if objectId == nil {
             print("got something but couldnt find id")
             return
         }
@@ -88,7 +95,11 @@ public class Connection {
                 }
             }
             
-            self.requestCallbacks[objectId!] = newCallbacks
+            if newCallbacks.count == 0 {
+                self.requestCallbacks.removeValueForKey(objectId!)
+            } else {
+                 self.requestCallbacks[objectId!] = newCallbacks
+            }
         }
         
     }
@@ -111,16 +122,12 @@ public class Connection {
         }
     }
     
+    // Payload must be serializable by NSJSONSerialization
+    // Your model class should generate an NSDictionary or similar of how it was to be serialized
     public func createModel(modelName: String,payload: AnyObject,callback: (JSON) -> (Bool)) {
         let rid = NSUUID().UUIDString
-        let command = ["action" : "create", "model" : modelName, "rid" : rid]
-        if requestCallbacks[rid] == nil {
-            requestCallbacks[rid] = []
-        }
-        requestCallbacks[rid]?.append(callback)
-
-        
-        self.sendObject(command)
+        self.addCallback(rid, callback: callback)
+        self.sendObject(["action" : "create", "model" : modelName, "rid" : rid])
         self.sendObject(payload)
     }
     
@@ -140,31 +147,50 @@ public class Connection {
         self.createModel("message", payload: msg.serverRepresentation(),callback: callback)
     }
     
-    public func getMailbox(uuid: String, callback: (JSON) -> (Bool)) {
-        if requestCallbacks[uuid] == nil {
-            requestCallbacks[uuid] = []
+    public func getMailbox(uuid: String, callback: (Mailbox) -> ()) {
+        self.addCallback(uuid) { (json) -> (Bool) in
+            let mailbox = Mailbox(json: json)
+            callback(mailbox)
+            return true
         }
-        
-        requestCallbacks[uuid]?.append(callback)
-        let command = ["action" : "read", "model" : "mailbox","id" : uuid]
-        self.sendObject(command)
+        self.sendObject(["action" : "read", "model" : "mailbox","id" : uuid])
     }
     
-    public func getThread(uuid: String, callback: (JSON) -> (Bool)) {
-        if requestCallbacks[uuid] == nil {
-            requestCallbacks[uuid] = []
+    public func getThread(uuid: String, callback: (Thread) -> ()) {
+        // let us know when you get a response
+        self.addCallback(uuid) { (json) -> (Bool) in
+            let thread = Thread(json: json)
+            callback(thread)
+            return true
         }
-        
-        requestCallbacks[uuid]?.append(callback)
-        let command = ["action" : "read", "model" : "thread","id" : uuid]
-        self.sendObject(command)
+        self.sendObject(["action" : "read", "model" : "thread","id" : uuid]) // send request
     }
     
-    public func getMember(threadId: String, mailboxId: String, callback: (Member?) -> ()) {
-        callback(Member())
+    public func getMember(threadId: String, mailboxId: String, callback: (Member) -> ()) {
+        let combinedId = "\(threadId)-\(mailboxId)"
+        self.addCallback(combinedId) { (json) -> (Bool) in
+            let member = Member(json: json)
+            callback(member)
+            return true
+        }
+        self.sendObject(["action" : "read", "model": "threadmember","thread_id":threadId,"mailbox_id":mailboxId])
     }
     
-    public func getMessage(uuid: String, callback: (Message?) -> ()) {
-        callback(Message())
+    public func getMessage(uuid: String, callback: (Message) -> ()) {
+        self.addCallback(uuid) { (json) -> (Bool) in
+            let message = Message(json: json)
+            callback(message)
+            return true
+        }
+        self.sendObject(["action" : "read", "model" : "message","id" : uuid])
+
+    }
+    
+    private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
+        if self.requestCallbacks[uuid] == nil {
+            requestCallbacks[uuid] = [callback]
+        } else {
+            requestCallbacks[uuid]?.append(callback)
+        }
     }
 }
