@@ -109,12 +109,18 @@ public class Connection {
         return true
     }
     
-    public func sendObject(command: AnyObject) -> Bool {
+    public func sendObject(commands: AnyObject...) -> Bool {
         do {
-            let jsonData = try NSJSONSerialization.dataWithJSONObject(command, options: [])
-            let jsonString = String(data: jsonData, encoding: NSUTF8StringEncoding)
+            var jsonStrings = [String]()
+            for command in commands {
+                let jsonData = try NSJSONSerialization.dataWithJSONObject(command, options: [])
+                let jsonString = String(data: jsonData, encoding: NSUTF8StringEncoding)
+                jsonStrings.append(jsonString!)
+            }
             dispatch_async(self.writeQueue) {
-                self.socket.writeString(jsonString!)
+                for jsonString in jsonStrings {
+                     self.socket.writeString(jsonString)
+                }
             }
             return true
         } catch {
@@ -184,6 +190,14 @@ public class Connection {
         }
         self.sendObject(["action" : "read", "model" : "message","id" : uuid])
 
+    }
+    
+    public func updateMailbox(mb: Mailbox,callback: (Mailbox) -> ()) {
+        self.addCallback(mb.uuid) { (json) -> (Bool) in
+            let mbx = Mailbox(json: json)
+            callback(mbx)
+            return true
+        }
     }
     
     private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
