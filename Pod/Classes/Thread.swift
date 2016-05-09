@@ -46,6 +46,10 @@ public class Thread {
             self.subject = subject
         }
         
+        if let identifier = json["Identifier"].string {
+            self.identifier = identifier
+        }
+        
         jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
         if let createdAt = json["CreatedAt"].string {
             if let createdDate = jsonDateFormatter.dateFromString(createdAt) {
