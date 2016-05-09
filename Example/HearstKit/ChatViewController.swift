@@ -86,9 +86,11 @@ class ChatViewController: SLKTextViewController {
         
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
-            self.chatServer.createMailbox(Mailbox(), callback: { (json) -> (Bool) in
-                let mb = Mailbox(json: json["payload"])
-                print("got after create",mb)
+            let newThread = Thread()
+            newThread.subject = "something cool"
+            self.chatServer.createThread(newThread, callback: { (json) -> (Bool) in
+                let mb = Thread(json: json["payload"])
+                print("got after create",mb.uuid)
                 return true
             })
         }

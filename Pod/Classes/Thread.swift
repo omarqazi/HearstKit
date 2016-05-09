@@ -7,12 +7,20 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 public class Thread {
     public var subject: String = ""
     public var uuid: String = ""
     public var domain: String = ""
     public var identifier: String = ""
+    public var createdAt: NSDate = NSDate.distantPast()
+    public var updatedAt: NSDate = NSDate.distantPast()
+    
+    public convenience init(json: JSON) {
+        self.init()
+        self.parse(json)
+    }
     
     public func serverRepresentation() -> [String : AnyObject] {
         let payload = [
@@ -23,5 +31,32 @@ public class Thread {
         ]
         
         return payload
+    }
+    
+    public func parse(json: JSON) {
+        if let uuid = json["Id"].string {
+            self.uuid = uuid
+        }
+        
+        if let domain = json["Domain"].string {
+            self.domain  = domain
+        }
+        
+        if let subject = json["Subject"].string {
+            self.subject = subject
+        }
+        
+        jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
+        if let createdAt = json["CreatedAt"].string {
+            if let createdDate = jsonDateFormatter.dateFromString(createdAt) {
+                self.createdAt = createdDate
+            }
+        }
+        if let updatedAt = json["UpdatedAt"].string {
+            if let updatedDate = jsonDateFormatter.dateFromString(updatedAt) {
+                self.updatedAt = updatedDate
+            }
+        }
+
     }
 }
