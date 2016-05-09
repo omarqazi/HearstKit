@@ -87,10 +87,18 @@ class ChatViewController: SLKTextViewController {
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
             
-            self.chatServer.getMessage("682a2d51-2f53-48a7-bc36-05fab4cf1033") { msg in
-                print(JSON(msg.serverRepresentation()))
-                print(msg.createdAt)
-            }
+            let mb = Mailbox()
+            mb.deviceId = "original-id"
+            mb.generatePrivateKey()
+            self.chatServer.createMailbox(mb, callback: { (json) -> (Bool) in
+                let mbx = Mailbox(json: json["payload"])
+                print(mbx.uuid)
+                mbx.deviceId = "new-id-changed"
+                self.chatServer.updateMailbox(mbx, callback: { (mbb) in
+                    print(JSON(mbb.serverRepresentation()))
+                })
+                return true
+            })
         }
     }
     

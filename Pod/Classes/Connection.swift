@@ -133,8 +133,7 @@ public class Connection {
     public func createModel(modelName: String,payload: AnyObject,callback: (JSON) -> (Bool)) {
         let rid = NSUUID().UUIDString
         self.addCallback(rid, callback: callback)
-        self.sendObject(["action" : "create", "model" : modelName, "rid" : rid])
-        self.sendObject(payload)
+        self.sendObject(["action" : "create", "model" : modelName, "rid" : rid],payload)
     }
     
     public func createMailbox(mb: Mailbox, callback: (JSON) -> (Bool)) {
@@ -198,6 +197,7 @@ public class Connection {
             callback(mbx)
             return true
         }
+        self.sendObject(["action":"update","model":"mailbox"],mb.serverRepresentation())
     }
     
     private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
