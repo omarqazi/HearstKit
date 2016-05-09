@@ -17,7 +17,8 @@ public class Connection {
     public var onConnect: ((Void) -> Void)?
     public var onDisconnect: ((NSError?) -> Void)?
     public var onText: ((String) -> Void)?
-    
+    private var requestCallbacks: [String : [(JSON) -> (Bool)]] = [:]
+    private var writeQueue: dispatch_queue_t = dispatch_queue_create("co.smick.hearstkit.writeq", DISPATCH_QUEUE_SERIAL)
     
     init(serverDomain: String) {
         let socketUrl = NSURL(string: "wss://\(serverDomain)/sock/")!
@@ -29,42 +30,67 @@ public class Connection {
             return true
         }
         
-        socket.onConnect = {
-            self.socket.writeString(self.auth.socketAuthenticationRequest())
-            if let oc = self.onConnect {
-                oc()
-            }
-            print("websocket is connected")
-        }
-        
-        socket.onDisconnect = { (error: NSError?) in
-            if let odc = self.onDisconnect {
-                odc(error)
-            }
-            print("websocket is disconnected: \(error?.localizedDescription)")
-            
-        }
-        
-        socket.onText = { (text: String) in
-            if let otxt = self.onText {
-                otxt(text)
-            }
-            let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
-            let json = JSON(data: jsonData!)
-            print(json)
-
-        }
+        socket.onConnect = self.socketDidConnect
+        socket.onDisconnect = self.socketDidDisconnect
+        socket.onText = self.socketGotText
         
         socket.onData = { (data: NSData) in
             print("got some data: \(data.length)")
         }
-        
         socket.onPong = {
             print("PONG")
         }
         
         socket.connect()
         return true
+    }
+    
+    private func socketDidConnect() {
+        dispatch_sync(self.writeQueue) {
+            self.socket.writeString(self.auth.socketAuthenticationRequest())
+        }
+        
+        if let oc = self.onConnect {
+            oc()
+        }
+    }
+    
+    private func socketDidDisconnect(error: NSError?) {
+        if let odc = self.onDisconnect {
+            odc(error)
+        }
+    }
+    
+    private func socketGotText(text: String) {
+        if let otxt = self.onText {
+            otxt(text)
+        }
+        
+        let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
+        let json = JSON(data: jsonData!)
+        
+        var objectId = json["Id"].string
+        if objectId == nil {
+            objectId = json["rid"].string
+        }
+        if objectId == nil {
+            print("got something but couldnt find id")
+            return
+        }
+        
+        if let callbacks = self.requestCallbacks[objectId!] {
+            var newCallbacks: [(JSON) -> (Bool)] = []
+            
+            for callback in callbacks {
+                let doneListening = callback(json)
+                if !doneListening {
+                    newCallbacks.append(callback)
+                }
+            }
+            
+            self.requestCallbacks[objectId!] = newCallbacks
+        }
+        
     }
     
     public func disconnect() -> Bool {
@@ -76,32 +102,69 @@ public class Connection {
         do {
             let jsonData = try NSJSONSerialization.dataWithJSONObject(command, options: [])
             let jsonString = String(data: jsonData, encoding: NSUTF8StringEncoding)
-            self.socket.writeString(jsonString!)
+            dispatch_async(self.writeQueue) {
+                self.socket.writeString(jsonString!)
+            }
             return true
         } catch {
             return false
         }
     }
     
-    public func createModel(modelName: String,payload: AnyObject) {
-        let command = ["action" : "create", "model" : modelName]
+    public func createModel(modelName: String,payload: AnyObject,callback: (JSON) -> (Bool)) {
+        let rid = NSUUID().UUIDString
+        let command = ["action" : "create", "model" : modelName, "rid" : rid]
+        if requestCallbacks[rid] == nil {
+            requestCallbacks[rid] = []
+        }
+        requestCallbacks[rid]?.append(callback)
+
+        
         self.sendObject(command)
         self.sendObject(payload)
     }
     
-    public func createMailbox(mb: Mailbox) {
-        self.createModel("mailbox", payload: mb.serverRepresentation())
+    public func createMailbox(mb: Mailbox, callback: (JSON) -> (Bool)) {
+        self.createModel("mailbox", payload: mb.serverRepresentation(),callback: callback)
     }
     
-    public func createThread(tr: Thread) {
-        self.createModel("thread", payload: tr.serverRepresentation())
+    public func createThread(tr: Thread, callback: (JSON) -> (Bool)) {
+        self.createModel("thread", payload: tr.serverRepresentation(), callback: callback)
     }
     
-    public func createMember(mem: Member) {
-        self.createModel("threadmember", payload: mem.serverRepresentation())
+    public func createMember(mem: Member, callback: (JSON) -> (Bool)) {
+        self.createModel("threadmember", payload: mem.serverRepresentation(), callback: callback)
     }
     
-    public func createMessage(msg: Message) {
-        self.createModel("message", payload: msg.serverRepresentation())
+    public func createMessage(msg: Message, callback: (JSON) -> (Bool)) {
+        self.createModel("message", payload: msg.serverRepresentation(),callback: callback)
+    }
+    
+    public func getMailbox(uuid: String, callback: (JSON) -> (Bool)) {
+        if requestCallbacks[uuid] == nil {
+            requestCallbacks[uuid] = []
+        }
+        
+        requestCallbacks[uuid]?.append(callback)
+        let command = ["action" : "read", "model" : "mailbox","id" : uuid]
+        self.sendObject(command)
+    }
+    
+    public func getThread(uuid: String, callback: (JSON) -> (Bool)) {
+        if requestCallbacks[uuid] == nil {
+            requestCallbacks[uuid] = []
+        }
+        
+        requestCallbacks[uuid]?.append(callback)
+        let command = ["action" : "read", "model" : "thread","id" : uuid]
+        self.sendObject(command)
+    }
+    
+    public func getMember(threadId: String, mailboxId: String, callback: (Member?) -> ()) {
+        callback(Member())
+    }
+    
+    public func getMessage(uuid: String, callback: (Message?) -> ()) {
+        callback(Message())
     }
 }

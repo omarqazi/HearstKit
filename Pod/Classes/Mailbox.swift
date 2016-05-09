@@ -17,6 +17,7 @@ public class Mailbox {
     public var publicKey: SecKey?
     public var privateKeyTag: String = "co.smick.hearst.defaultkey.private"
     public var publicKeyTag: String = "co.smick.hearst.defaultkey.public"
+    public var publicKeyString: String = ""
     public var uuid: String = ""
     public var deviceId: String = ""
     public var connectedAt: NSDate = NSDate.distantPast()
@@ -26,6 +27,11 @@ public class Mailbox {
     
     public init() {
         
+    }
+    
+    public convenience init(json: JSON) {
+        self.init()
+        self.parse(json)
     }
     
     public func generatePrivateKey() -> OSStatus {
@@ -88,15 +94,40 @@ public class Mailbox {
         return "internal error"
     }
     
-    public func parse(jsonData: NSData) {
-        let obj = JSON(data: jsonData)
-        
-        if let uuid = obj["Id"].string {
+    public func parse(json: JSON) {
+        if let uuid = json["Id"].string {
             self.uuid = uuid
+        }
+        
+        if let deviceId = json["DeviceId"].string {
+            self.deviceId = deviceId
+        }
+        
+        if let publicKey = json["PublicKey"].string {
+            self.publicKeyString = publicKey
+        }
+        
+        jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
+        if let createdAt = json["CreatedAt"].string {
+            if let createdDate = jsonDateFormatter.dateFromString(createdAt) {
+                self.createdAt = createdDate
+            }
+        }
+        if let updatedAt = json["UpdatedAt"].string {
+            if let updatedDate = jsonDateFormatter.dateFromString(updatedAt) {
+                self.updatedAt = updatedDate
+            }
+        }
+        
+        if let connectedAt = json["ConnectedAt"].string {
+            if let connectedDate = jsonDateFormatter.dateFromString(connectedAt) {
+                self.connectedAt = connectedDate
+            }
         }
     }
     
     public func serverRepresentation() -> [String : AnyObject] {
+        jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
         let payload = [
             "Id" : self.uuid,
             "PublicKey" : self.keyToString(),
@@ -114,7 +145,6 @@ public class Mailbox {
             "Id" : self.uuid,
             "PublicKey" : self.keyToString(),
             "DeviceId" : self.deviceId,
-            "ConnectedAt" : jsonDateFormatter.stringFromDate(self.connectedAt),
         ]
         
         var jsonData: NSData?

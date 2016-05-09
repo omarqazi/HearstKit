@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import SwiftyJSON
 
 class MailboxTest: XCTestCase {
     
@@ -54,7 +55,7 @@ class MailboxTest: XCTestCase {
     func testParse() {
         let mb = Mailbox()
         mb.uuid = "some-uuid"
-        let payload = mb.payloadData()
+        let payload = JSON(data: mb.payloadData())
         let mbx = Mailbox()
         mbx.parse(payload)
         XCTAssert(mbx.uuid == mb.uuid,"Expected Mailbox to parse UUID")

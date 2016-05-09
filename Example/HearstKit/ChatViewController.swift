@@ -59,7 +59,6 @@ class ChatViewController: SLKTextViewController {
             }
             
             if let respDict = result as? [String : String] {
-                print(respDict)
                 self.facebookUserId = respDict["id"]
                 self.facebookUserName = respDict["name"]
                 self.setTextInputbarHidden(false, animated: false)
@@ -87,19 +86,18 @@ class ChatViewController: SLKTextViewController {
         
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
-        }
-        
-        self.chatServer.onText = { msg in
-            print("HearstKit got message:", msg)
+            self.chatServer.createMailbox(Mailbox(), callback: { (json) -> (Bool) in
+                let mb = Mailbox(json: json["payload"])
+                print("got after create",mb)
+                return true
+            })
         }
     }
     
     override func viewWillDisappear(animated: Bool) {
         if self.socket.isConnected {
             self.socket.disconnect()
-            print("disconnecting")
         } else {
-            print("no need to disconnect")
         }
     }
     
@@ -210,17 +208,16 @@ class ChatViewController: SLKTextViewController {
         socket.onConnect = {
             let jsonString = "{\"model\" : \"thread\", \"action\" : \"list\", \"follow\" : \"true\", \"history_topic\" : \"chat-message\", \"limit\" : \"100\", \"thread_id\" : \"\(threadId)\"}"
             self.socket.writeString(jsonString)
-            print("websocket is connected")
+            print("oldsocket is connected")
         }
         //websocketDidDisconnect
         socket.onDisconnect = { (error: NSError?) in
-            print("websocket is disconnected: \(error?.localizedDescription)")
+            print("oldsocket is disconnected: \(error?.localizedDescription)")
         }
         //websocketDidReceiveMessage
         socket.onText = { (text: String) in
             let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
             let json = JSON(data: jsonData!)
-            print(json)
             
             let isFirstLoad = (self.messages.count == 0)
             var actualMessageAdded = false
@@ -272,11 +269,9 @@ class ChatViewController: SLKTextViewController {
         }
         //websocketDidReceiveData
         socket.onData = { (data: NSData) in
-            print("got some data: \(data.length)")
         }
         
         socket.onPong = {
-            print("PONG")
         }
         socket.connect()
         self.connecting = false
