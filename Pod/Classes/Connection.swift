@@ -200,6 +200,82 @@ public class Connection {
         self.sendObject(["action":"update","model":"mailbox"],mb.serverRepresentation())
     }
     
+    public func updateThread(tr: Thread,callback: (Thread) -> ()) {
+        self.addCallback(tr.uuid) { (json) -> (Bool) in
+            let tx = Thread(json: json)
+            callback(tx)
+            return true
+        }
+        self.sendObject(["action":"update","model":"thread"],tr.serverRepresentation())
+    }
+    
+    public func updateMember(mem: Member,callback: (Member) -> ()) {
+        let combinedId = "\(mem.threadId)-\(mem.mailboxId)"
+        self.addCallback(combinedId) { (json) -> (Bool) in
+            let mem = Member(json: json)
+            callback(mem)
+            return true
+        }
+        self.sendObject(["action":"update","model":"threadmember"],mem.serverRepresentation())
+    }
+    
+    public func deleteMailbox(mb: Mailbox, callback: (Mailbox) -> ()) {
+        self.addCallback(mb.uuid) { (json) -> (Bool) in
+            let mbx = Mailbox(json: json)
+            callback(mbx)
+            return true
+        }
+        self.sendObject(["action" : "delete", "model":"mailbox","id" : mb.uuid])
+    }
+    
+    public func deleteThread(tr: Thread, callback: (Thread) -> ()) {
+        self.addCallback(tr.uuid) { (json) -> (Bool) in
+            let trx = Thread(json: json)
+            callback(trx)
+            return true
+        }
+        self.sendObject(["action":"delete","model":"thread","id":tr.uuid])
+    }
+    
+    public func deleteMember(mem: Member, callback: (Member) -> ()) {
+        let combinedId = "\(mem.threadId)-\(mem.mailboxId)"
+        self.addCallback(combinedId) { (json) -> (Bool) in
+            let memx = Member(json: json)
+            callback(memx)
+            return true
+        }
+        self.sendObject(["action":"delete","model":"threadmember","mailbox_id":mem.mailboxId,"thread_id":mem.threadId])
+    }
+    
+    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, follow: Bool, callback: ([Message]) -> (Bool)) {
+        let rid = NSUUID().UUIDString
+        self.addCallback(rid) { (json) -> (Bool) in
+            var messages = [Message]()
+            if let listResponse = json["payload"].array {
+                for messageJson in listResponse {
+                    messages.append(Message(json: messageJson))
+                }
+                var rv = callback(messages)
+                if follow == false {
+                    rv = true
+                }
+                return rv
+            }
+            
+            return false
+        }
+        self.sendObject([
+            "action":"list",
+            "model":"thread",
+            "id":thread.uuid,
+            "topic" : topic,
+            "lastsequence" : "\(lastSequence)",
+            "limit":"\(limit)",
+            "follow" : "\(follow)",
+            "rid" : rid
+        ])
+    }
+    
     private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
         if self.requestCallbacks[uuid] == nil {
             requestCallbacks[uuid] = [callback]
