@@ -8,7 +8,6 @@ import Foundation
 import SwiftyJSON
 
 var globalDateParser: NSDateFormatter?
-var relativeDateFormatter: NSDateFormatter?
 var imageCache = [String : UIImage]()
 
 class HearstMessage {
@@ -18,14 +17,7 @@ class HearstMessage {
     var serverPayload: JSON?
     var sendDate: NSDate?
     var facebookId: String?
-    var dateParser: NSDateFormatter {
-        if globalDateParser == nil {
-            globalDateParser = NSDateFormatter()
-            globalDateParser!.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSSSSSZ"
-            globalDateParser!.timeZone = NSTimeZone(forSecondsFromGMT: 0)
-        }
-        return globalDateParser!
-    }
+    var dateParser: NSDateFormatter = NSDateFormatter()
     var userImageUrl: NSURL? {
         get {
             if self.facebookId == nil || self.facebookId!.isEmpty {

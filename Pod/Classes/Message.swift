@@ -9,6 +9,8 @@
 import Foundation
 import SwiftyJSON
 
+var relativeDateFormatter: NSDateFormatter?
+
 public class Message {
     public var uuid: String = ""
     public var body: String = ""
@@ -20,6 +22,16 @@ public class Message {
     public var senderId: String = ""
     public var createdAt: NSDate = NSDate.distantPast()
     public var serverConnection:  Connection?
+    var dateFormatter: NSDateFormatter {
+        if relativeDateFormatter == nil {
+            relativeDateFormatter = NSDateFormatter()
+            relativeDateFormatter?.locale = NSLocale.autoupdatingCurrentLocale()
+            relativeDateFormatter?.timeStyle = .ShortStyle
+            relativeDateFormatter?.dateStyle = .NoStyle
+            relativeDateFormatter?.doesRelativeDateFormatting = true
+        }
+        return relativeDateFormatter!
+    }
     
     public convenience init(json: JSON) {
         self.init()
@@ -42,6 +54,10 @@ public class Message {
         ]
         
         return payload
+    }
+    
+    func relativeSendTime() -> String {
+        return self.dateFormatter.stringFromDate(self.createdAt)
     }
     
     public func parse(json: JSON) {
