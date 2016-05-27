@@ -16,6 +16,7 @@ public class Thread {
     public var identifier: String = ""
     public var createdAt: NSDate = NSDate.distantPast()
     public var updatedAt: NSDate = NSDate.distantPast()
+    public var serverConnection:  Connection?
     
     public convenience init(json: JSON) {
         self.init()

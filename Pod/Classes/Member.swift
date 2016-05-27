@@ -15,6 +15,8 @@ public class Member {
     public var allowRead: Bool = false
     public var allowWrite: Bool = false
     public var allowNotification: Bool = false
+    public var serverConnection:  Connection?
+
     
     public convenience init(json: JSON) {
         self.init()

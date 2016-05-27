@@ -70,6 +70,7 @@ public class Connection {
         let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
         let json = JSON(data: jsonData!)
         
+        // detect notifications
         if json[0]["ModelClass"].string == "message" {
             for (_,eventJson):(String, JSON) in json {
                 if let om = self.onMessage {
@@ -80,18 +81,19 @@ public class Connection {
             return
         }
         
+        
         var objectId = json["Id"].string
         if objectId == nil {
             objectId = json["rid"].string
         }
-        if objectId == nil {
+        if objectId == nil { // for members, which don't have an Id
             let threadId = json["ThreadId"].string
             let mailboxId = json["MailboxId"].string
             if threadId != nil && mailboxId != nil {
                 objectId = "\(threadId)-\(mailboxId)"
             }
         }
-        if objectId == nil {
+        if objectId == nil { // huh? this shouldn't happen
             print("got something but couldnt find id")
             return
         }
@@ -166,6 +168,7 @@ public class Connection {
     public func getMailbox(uuid: String, callback: (Mailbox) -> ()) {
         self.addCallback(uuid) { (json) -> (Bool) in
             let mailbox = Mailbox(json: json)
+            mailbox.serverConnection = self
             callback(mailbox)
             return true
         }
@@ -176,6 +179,7 @@ public class Connection {
         // let us know when you get a response
         self.addCallback(uuid) { (json) -> (Bool) in
             let thread = Thread(json: json)
+            thread.serverConnection = self
             callback(thread)
             return true
         }
@@ -186,6 +190,7 @@ public class Connection {
         let combinedId = "\(threadId)-\(mailboxId)"
         self.addCallback(combinedId) { (json) -> (Bool) in
             let member = Member(json: json)
+            member.serverConnection = self
             callback(member)
             return true
         }
@@ -195,6 +200,7 @@ public class Connection {
     public func getMessage(uuid: String, callback: (Message) -> ()) {
         self.addCallback(uuid) { (json) -> (Bool) in
             let message = Message(json: json)
+            message.serverConnection = self
             callback(message)
             return true
         }
@@ -205,6 +211,7 @@ public class Connection {
     public func updateMailbox(mb: Mailbox,callback: (Mailbox) -> ()) {
         self.addCallback(mb.uuid) { (json) -> (Bool) in
             let mbx = Mailbox(json: json)
+            mb.serverConnection = self
             callback(mbx)
             return true
         }
@@ -214,6 +221,7 @@ public class Connection {
     public func updateThread(tr: Thread,callback: (Thread) -> ()) {
         self.addCallback(tr.uuid) { (json) -> (Bool) in
             let tx = Thread(json: json)
+            tx.serverConnection = self
             callback(tx)
             return true
         }
@@ -224,6 +232,7 @@ public class Connection {
         let combinedId = "\(mem.threadId)-\(mem.mailboxId)"
         self.addCallback(combinedId) { (json) -> (Bool) in
             let mem = Member(json: json)
+            mem.serverConnection = self
             callback(mem)
             return true
         }
@@ -233,6 +242,7 @@ public class Connection {
     public func deleteMailbox(mb: Mailbox, callback: (Mailbox) -> ()) {
         self.addCallback(mb.uuid) { (json) -> (Bool) in
             let mbx = Mailbox(json: json)
+            mbx.serverConnection = self
             callback(mbx)
             return true
         }
@@ -242,6 +252,7 @@ public class Connection {
     public func deleteThread(tr: Thread, callback: (Thread) -> ()) {
         self.addCallback(tr.uuid) { (json) -> (Bool) in
             let trx = Thread(json: json)
+            trx.serverConnection = self
             callback(trx)
             return true
         }
@@ -252,6 +263,7 @@ public class Connection {
         let combinedId = "\(mem.threadId)-\(mem.mailboxId)"
         self.addCallback(combinedId) { (json) -> (Bool) in
             let memx = Member(json: json)
+            memx.serverConnection = self
             callback(memx)
             return true
         }
@@ -264,7 +276,9 @@ public class Connection {
             var messages = [Message]()
             if let listResponse = json["payload"].array {
                 for messageJson in listResponse {
-                    messages.append(Message(json: messageJson))
+                    let mess = Message(json: messageJson)
+                    mess.serverConnection = self
+                    messages.append(mess)
                 }
                 callback(messages)
                 return true

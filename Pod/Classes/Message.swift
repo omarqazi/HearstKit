@@ -19,6 +19,7 @@ public class Message {
     public var threadId: String = ""
     public var senderId: String = ""
     public var createdAt: NSDate = NSDate.distantPast()
+    public var serverConnection:  Connection?
     
     public convenience init(json: JSON) {
         self.init()

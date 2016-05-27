@@ -23,6 +23,7 @@ public class Mailbox {
     public var connectedAt: NSDate = NSDate.distantPast()
     public var createdAt: NSDate = NSDate.distantPast()
     public var updatedAt: NSDate = NSDate.distantPast()
+    public var serverConnection:  Connection?
     
     
     public init() {
