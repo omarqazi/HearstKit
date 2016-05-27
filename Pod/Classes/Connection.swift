@@ -258,7 +258,7 @@ public class Connection {
         self.sendObject(["action":"delete","model":"threadmember","mailbox_id":mem.mailboxId,"thread_id":mem.threadId])
     }
     
-    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
+    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, choose: String, callback: ([Message]) -> (Bool)) {
         let rid = NSUUID().UUIDString
         self.addCallback(rid) { (json) -> (Bool) in
             var messages = [Message]()
@@ -279,8 +279,17 @@ public class Connection {
             "topic" : topic,
             "lastsequence" : "\(lastSequence)",
             "limit":"\(limit)",
-            "rid" : rid
+            "rid" : rid,
+            "choose" : choose
         ])
+    }
+    
+    public func messagesSince(thread: Thread,topic: String,lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
+        self.listThread(thread, topic: topic, lastSequence: lastSequence, limit: limit, choose: "first", callback: callback)
+    }
+    
+    public func recentMessages(thread: Thread, topic: String, lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
+        self.listThread(thread, topic: topic, lastSequence: lastSequence, limit: limit, choose: "latest", callback: callback)
     }
     
     private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
