@@ -149,20 +149,40 @@ public class Connection {
         self.sendObject(["action" : "create", "model" : modelName, "rid" : rid],payload)
     }
     
-    public func createMailbox(mb: Mailbox, callback: (JSON) -> (Bool)) {
-        self.createModel("mailbox", payload: mb.serverRepresentation(),callback: callback)
+    public func createMailbox(mb: Mailbox, callback: (Mailbox) -> ()) {
+        self.createModel("mailbox", payload: mb.serverRepresentation()) { (json) -> (Bool) in
+            let mb = Mailbox(json: json)
+            mb.serverConnection = self
+            callback(mb)
+            return true
+        }
     }
     
-    public func createThread(tr: Thread, callback: (JSON) -> (Bool)) {
-        self.createModel("thread", payload: tr.serverRepresentation(), callback: callback)
+    public func createThread(tr: Thread, callback: (Thread) -> ()) {
+        self.createModel("thread", payload: tr.serverRepresentation()) { (json) -> (Bool) in
+            let tr = Thread(json: json)
+            tr.serverConnection = self
+            callback(tr)
+            return true
+        }
     }
     
-    public func createMember(mem: Member, callback: (JSON) -> (Bool)) {
-        self.createModel("threadmember", payload: mem.serverRepresentation(), callback: callback)
+    public func createMember(mem: Member, callback: (Member) -> (Bool)) {
+        self.createModel("threadmember", payload: mem.serverRepresentation()) { (json) -> (Bool) in
+            let mem = Member(json: json)
+            mem.serverConnection = self
+            callback(mem)
+            return true
+        }
     }
     
-    public func createMessage(msg: Message, callback: (JSON) -> (Bool)) {
-        self.createModel("message", payload: msg.serverRepresentation(),callback: callback)
+    public func createMessage(msg: Message, callback: (Message) -> ()) {
+        self.createModel("message", payload: msg.serverRepresentation()) { (json) -> (Bool) in
+            let msg = Message(json: json)
+            msg.serverConnection = self
+            callback(msg)
+            return true
+        }
     }
     
     public func getMailbox(uuid: String, callback: (Mailbox) -> ()) {
