@@ -1,11 +1,3 @@
-//
-//  ChatViewCell.swift
-//  Hearst
-//
-//  Created by Omar Qazi on 1/28/16.
-//  Copyright © 2016 BQE Software. All rights reserved.
-//
-
 import UIKit
 
 class ChatViewCell: UITableViewCell {

@@ -146,6 +146,13 @@ public class Connection {
         }
     }
     
+    public func knownThread(uuid: String) -> Thread {
+        let thread = Thread()
+        thread.uuid  = uuid
+        thread.serverConnection = self
+        return thread
+    }
+    
     // Payload must be serializable by NSJSONSerialization
     // Your model class should generate an NSDictionary or similar of how it was to be serialized
     public func createModel(modelName: String,payload: AnyObject,callback: (JSON) -> (Bool)) {

@@ -1,11 +1,3 @@
-//
-//  ChatViewController.swift
-//  HearstChat
-//
-//  Created by Omar Qazi on 1/30/16.
-//  Copyright © 2016 BQE Software. All rights reserved.
-//
-
 import UIKit
 import SlackTextViewController
 import Starscream
@@ -15,7 +7,6 @@ import AudioToolbox
 import FBSDKCoreKit
 
 class ChatViewController: SLKTextViewController {
-    @IBOutlet weak var aButtonItem: UIBarButtonItem?
     var messages = [Message]()
     var chatServer = Connection(serverDomain: "chat.smick.co")
     var mailboxId = ""
@@ -30,14 +21,13 @@ class ChatViewController: SLKTextViewController {
     var facebookUserId: String?
     var facebookUserName: String?
     
-    var connecting = false
-    
     required init(coder decoder: NSCoder) {
         super.init(tableViewStyle: .Plain)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Use a custom table view cell to display chat messages
         self.tableView?.registerNib(UINib(nibName: "ChatViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
     }
     
@@ -50,6 +40,7 @@ class ChatViewController: SLKTextViewController {
         super.didPressRightButton(sender)
     }
     
+    // Get the user's name and user id from Facebook
     func requestFacebookProfile() {
         FBSDKGraphRequest(graphPath: "me?fields=id,name", parameters: nil).startWithCompletionHandler({ (conn, result, err) -> Void in
             if err != nil {
@@ -78,18 +69,25 @@ class ChatViewController: SLKTextViewController {
         self.keyboardPanningEnabled = true
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
-            let thread = Thread()
-            thread.uuid = "14602a52-0018-44c0-8b28-4039c7e5e52c"
-            thread.serverConnection = self.chatServer
+            let thread = self.chatServer.knownThread(self.threadId)
             
+            // get the 20 most recent chat messages we don't already have
             thread.recentMessages(340, limit: 20, topicFilter: "chat-message", callback: { msgs in
                 for msg in msgs {
                     self.addNextMessage(msg)
                 }
             })
             
+            // add new messages as we get them
             thread.onMessage({ (msg) -> (Bool) in
-                self.addNextMessage(msg)
+                switch msg.topic {
+                    case "chat-message":
+                        self.addNextMessage(msg)
+                    case "typing-notification":
+                        print("AyYYY lmao")
+                default:
+                    print("HUH wtf is this",msg.topic)
+                }
                 return false
             })
         }
