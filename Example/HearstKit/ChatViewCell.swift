@@ -13,8 +13,8 @@ class ChatViewCell: UITableViewCell {
     @IBOutlet weak var messageBodyField: UILabel?
     @IBOutlet weak var userImageView: UIImageView?
     @IBOutlet weak var dateField: UILabel?
-    var _message: HearstMessage?
-    var message: HearstMessage? {
+    var _message: Message?
+    var message: Message? {
         get {
             return self._message
         }
@@ -27,13 +27,13 @@ class ChatViewCell: UITableViewCell {
     
     func updateDisplay() {
         let msg = self.message
-        senderNameField?.text = msg?.senderName
+        senderNameField?.text = msg?.labels["SenderFacebookName"].string
         messageBodyField?.text = msg?.body
         messageBodyField?.sizeToFit()
-        dateField?.text = msg?.relativeSendTime()
+        dateField?.text = msg?.createdAt.description
         if userImageView != nil {
             let iv = userImageView!
-            iv.image = msg?.userImage
+            //iv.image = msg?.userImage
             iv.layer.cornerRadius = (iv.frame.size.width / 2)
             iv.layer.borderColor = UIColor.blackColor().CGColor
             iv.layer.borderWidth = 1.0

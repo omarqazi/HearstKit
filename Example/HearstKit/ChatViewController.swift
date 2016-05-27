@@ -16,8 +16,7 @@ import FBSDKCoreKit
 
 class ChatViewController: SLKTextViewController {
     @IBOutlet weak var aButtonItem: UIBarButtonItem?
-    var messages = [HearstMessage]()
-    var socket = WebSocket(url: NSURL(string: "wss://chat.smick.co/socket/")!)
+    var messages = [Message]()
     var chatServer = Connection(serverDomain: "chat.smick.co")
     var mailboxId = ""
     var threadId = ""
@@ -77,32 +76,34 @@ class ChatViewController: SLKTextViewController {
         self.inverted = false
         self.textInputbar.textView.placeholder = "Type some shit"
         self.keyboardPanningEnabled = true
-        
-        if !socket.isConnected {
-            self.connecting = true
-            print("about to attempt connection")
-            self.attemptConnection()
-        }
-        
-        self.chatServer.onMessage = { msg in
-            print(msg.serverRepresentation())
-        }
-        
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
             let thread = Thread()
             thread.uuid = "14602a52-0018-44c0-8b28-4039c7e5e52c"
             thread.serverConnection = self.chatServer
+            
+            thread.recentMessages(340, limit: 20, topicFilter: "chat-message", callback: { msgs in
+                for msg in msgs {
+                    self.addNextMessage(msg)
+                }
+            })
+            
             thread.onMessage({ (msg) -> (Bool) in
-                print("WOW",msg.body)
+                self.addNextMessage(msg)
                 return false
             })
         }
+        
+        self.chatServer.onDisconnect = { err in
+            print("NEW SOCKET DISCONNECTED!!", err)
+        }
+        
+        self.attemptConnection()
     }
     
     override func viewWillDisappear(animated: Bool) {
-        if self.socket.isConnected {
-            self.socket.disconnect()
+        if self.chatServer.socket.isConnected {
+            self.chatServer.disconnect()
         } else {
         }
     }
@@ -129,26 +130,15 @@ class ChatViewController: SLKTextViewController {
             return
         }
         
-        let insertRequest = ["model":"message", "action": "insert"]
-        let messageDescription = [
-            "ThreadId" : self.threadId,
-            "SenderMailboxId" : self.mailboxId,
-            "Body" : "",
-            "Labels" : ["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!],
-            "Payload" : ["is_typing" : isTyping.description],
-            "Topic" : "typing-notification"
-        ]
-        do {
-            let requestData = try NSJSONSerialization.dataWithJSONObject(insertRequest, options: NSJSONWritingOptions(rawValue: 0))
-            let messageData = try NSJSONSerialization.dataWithJSONObject(messageDescription, options: NSJSONWritingOptions(rawValue: 0))
-            let requestString = String(data: requestData, encoding: NSUTF8StringEncoding)
-            let messageString = String(data: messageData, encoding: NSUTF8StringEncoding)
-            if requestString != nil && messageString != nil {
-                socket.writeString(requestString!)
-                socket.writeString(messageString!)
-            }
-        } catch {
-            print("it shit the bed")
+        let msg = Message()
+        msg.threadId = self.threadId
+        msg.senderId = self.mailboxId
+        msg.body = ""
+        msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
+        msg.topic = "typing-notification"
+        msg.payload = JSON(["is_typing" : isTyping.description])
+        
+        self.chatServer.createMessage(msg) { msgx in
         }
     }
     
@@ -163,26 +153,14 @@ class ChatViewController: SLKTextViewController {
         
         sentTypingIndicatorRecently = false
         
-        let insertRequest = ["model":"message", "action": "insert"]
-        let messageDescription = [
-            "ThreadId" : self.threadId,
-            "SenderMailboxId" : self.mailboxId,
-            "Body" : aMessage,
-            "Labels" : ["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!],
-            "Payload" : [],
-            "Topic" : "chat-message"
-        ]
-        do {
-            let requestData = try NSJSONSerialization.dataWithJSONObject(insertRequest, options: NSJSONWritingOptions(rawValue: 0))
-            let messageData = try NSJSONSerialization.dataWithJSONObject(messageDescription, options: NSJSONWritingOptions(rawValue: 0))
-            let requestString = String(data: requestData, encoding: NSUTF8StringEncoding)
-            let messageString = String(data: messageData, encoding: NSUTF8StringEncoding)
-            if requestString != nil && messageString != nil {
-                socket.writeString(requestString!)
-                socket.writeString(messageString!)
-            }
-        } catch {
-            print("it shit the bed")
+        let msg = Message()
+        msg.threadId = self.threadId
+        msg.senderId = self.mailboxId
+        msg.body = aMessage
+        msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
+        msg.topic = "chat-message"
+        
+        self.chatServer.createMessage(msg) { msg in
         }
     }
     
@@ -200,97 +178,21 @@ class ChatViewController: SLKTextViewController {
                 authStrategy.sessionToken = responseJson["session_token"] as! String
                 self.chatServer.auth = authStrategy
                 self.chatServer.connect()
-                
-                self.connectToHearst(self.mailboxId, threadId: self.threadId, sessionToken: self.sessionToken)
             }
         }
         return true
     }
     
-    func connectToHearst(mailboxId: String, threadId: String, sessionToken: String) {
-        socket = WebSocket(url: NSURL(string: "wss://chat.smick.co/socket/")!)
-        socket.headers["X-Hearst-Mailbox"] = mailboxId
-        socket.headers["X-Hearst-Session"] = sessionToken
-        socket.onConnect = {
-            let jsonString = "{\"model\" : \"thread\", \"action\" : \"list\", \"follow\" : \"true\", \"history_topic\" : \"chat-message\", \"limit\" : \"100\", \"thread_id\" : \"\(threadId)\"}"
-            self.socket.writeString(jsonString)
-            print("oldsocket is connected")
+    func addNextMessage(message: Message) {
+        if message.topic != "chat-message" {
+            return
         }
-        //websocketDidDisconnect
-        socket.onDisconnect = { (error: NSError?) in
-            print("oldsocket is disconnected: \(error?.localizedDescription)")
-        }
-        
-        //websocketDidReceiveMessage
-        socket.onText = { (text: String) in
-            let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
-            let json = JSON(data: jsonData!)
-            
-            let isFirstLoad = (self.messages.count == 0)
-            var actualMessageAdded = false
-            
-            for (_, val) in json {
-                var message = val
-                var bottomAdd = false
-                let modelClass = val["ModelClass"]
-                if modelClass != nil && modelClass == "message" {
-                    message = val["Payload"]
-                    bottomAdd = true
-                }
-                
-                let newMessage = HearstMessage()
-                newMessage.parse(message)
-                if newMessage.body != nil && !newMessage.body!.isEmpty {
-                    if newMessage.senderName != nil {
-                        self.typingIndicatorView?.removeUsername(newMessage.senderName!)
-                    }
-                    self.appendNewMessage(newMessage,addToBottom: bottomAdd)
-                    actualMessageAdded = true
-                } else if newMessage.body != nil && newMessage.body!.isEmpty {
-                    if let isTyping = newMessage.serverPayload?["Payload"]["is_typing"].string {
-                        if let sendName = newMessage.senderName {
-                            if sendName != self.facebookUserName {
-                                if isTyping == "true" {
-                                    self.typingIndicatorView?.insertUsername(sendName)
-                                } else if isTyping == "false" {
-                                    self.typingIndicatorView?.removeUsername(sendName)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if !actualMessageAdded { // if we didn't add anything to the table view
-                return // dont worry about scrolling or vibrating
-            }
-            
-            if !self.lockScrolling && self.messages.count > 0 {
-                let lastIndex = NSIndexPath(forRow: (self.messages.count - 1), inSection: 0)
-                self.tableView?.scrollToRowAtIndexPath(lastIndex, atScrollPosition: .Bottom, animated: !isFirstLoad)
-            } else if self.lockScrolling {
-                if json.count == 1 {
-                    AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-                }
-            }
-        }
-        //websocketDidReceiveData
-        socket.onData = { (data: NSData) in
-        }
-        
-        socket.onPong = {
-        }
-        socket.connect()
-        self.connecting = false
-    }
-    
-    func appendNewMessage(message: HearstMessage,addToBottom: Bool) {
         let insertionIndex = messages.count
         messages.insert(message, atIndex: insertionIndex)
         let indexPath = NSIndexPath(forRow: insertionIndex, inSection: 0)
         self.tableView?.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         if !self.lockScrolling {
-            self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: addToBottom)
+            self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
         }
     }
     
