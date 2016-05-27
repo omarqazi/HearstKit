@@ -92,8 +92,9 @@ class ChatViewController: SLKTextViewController {
             print("Connected using HearstKit")
             let thread = Thread()
             thread.uuid = "14602a52-0018-44c0-8b28-4039c7e5e52c"
-            self.chatServer.listThread(thread, topic: "typing-notification", lastSequence: 20, limit: 100, callback: { (msgs) -> (Bool) in
-                print("GOT MESSAGES",msgs)
+            thread.serverConnection = self.chatServer
+            thread.onMessage({ (msg) -> (Bool) in
+                print("WOW",msg.body)
                 return false
             })
         }

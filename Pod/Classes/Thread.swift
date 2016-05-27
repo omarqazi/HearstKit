@@ -64,4 +64,33 @@ public class Thread {
         }
 
     }
+    
+    public func sendMessage(message: Message, callback: (Message) -> ()) {
+        message.threadId = self.uuid
+        self.serverConnection?.createMessage(message, callback: callback)
+        
+    }
+    
+    public func messagesSince(lastSequence: Int64, limit: Int, topicFilter: String,callback: ([Message]) -> ()) {
+        self.serverConnection?.messagesSince(self, topic: topicFilter, lastSequence: lastSequence, limit: limit, callback: callback)
+    }
+    
+    public func recentMessages(lastSequence: Int64, limit: Int, topicFilter: String, callback: ([Message]) -> ()) {
+        self.serverConnection?.recentMessages(self, topic: topicFilter, lastSequence: lastSequence, limit: limit, callback: callback)
+    }
+    
+    public func onMessage(callback: (Message) -> (Bool)) {
+        self.serverConnection?.addCallback("notification-\(self.uuid)", callback: { (json) -> (Bool) in
+            for (_,eventJson):(String, JSON) in json {
+                let message = Message(json: eventJson["Payload"])
+                let rv = callback(message)
+                if rv == true {
+                    return true
+                }
+            }
+            return false
+        })
+    }
+    
+    
 }

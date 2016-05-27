@@ -70,22 +70,13 @@ public class Connection {
         let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
         let json = JSON(data: jsonData!)
         
-        // detect notifications
-        if json[0]["ModelClass"].string == "message" {
-            for (_,eventJson):(String, JSON) in json {
-                if let om = self.onMessage {
-                    let message = Message(json: eventJson["Payload"])
-                    om(message)
-                }
-            }
-            return
-        }
+        var objectId = json["Id"].string // Find callback by Id
         
-        
-        var objectId = json["Id"].string
         if objectId == nil {
-            objectId = json["rid"].string
+            objectId = json["rid"].string // or request ID
         }
+        
+        // or by the thread id + mailbox id if a member
         if objectId == nil { // for members, which don't have an Id
             let threadId = json["ThreadId"].string
             let mailboxId = json["MailboxId"].string
@@ -93,6 +84,20 @@ public class Connection {
                 objectId = "\(threadId)-\(mailboxId)"
             }
         }
+        
+        // or using a notification callback
+        if json[0]["ModelClass"].string == "message" {
+            for (_,eventJson):(String, JSON) in json {
+                let message = Message(json: eventJson["Payload"])
+                
+                if let om = self.onMessage {
+                    om(message)
+                }
+                
+                objectId = "notification-\(message.threadId)"
+            }
+        }
+        
         if objectId == nil { // huh? this shouldn't happen
             print("got something but couldnt find id")
             return
@@ -290,7 +295,7 @@ public class Connection {
         self.sendObject(["action":"delete","model":"threadmember","mailbox_id":mem.mailboxId,"thread_id":mem.threadId])
     }
     
-    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, choose: String, callback: ([Message]) -> (Bool)) {
+    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, choose: String, callback: ([Message]) -> ()) {
         let rid = NSUUID().UUIDString
         self.addCallback(rid) { (json) -> (Bool) in
             var messages = [Message]()
@@ -301,10 +306,9 @@ public class Connection {
                     messages.append(mess)
                 }
                 callback(messages)
-                return true
             }
             
-            return false
+            return true
         }
         self.sendObject([
             "action":"list",
@@ -318,15 +322,15 @@ public class Connection {
         ])
     }
     
-    public func messagesSince(thread: Thread,topic: String,lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
+    public func messagesSince(thread: Thread,topic: String,lastSequence: Int64, limit: Int, callback: ([Message]) -> ()) {
         self.listThread(thread, topic: topic, lastSequence: lastSequence, limit: limit, choose: "first", callback: callback)
     }
     
-    public func recentMessages(thread: Thread, topic: String, lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
+    public func recentMessages(thread: Thread, topic: String, lastSequence: Int64, limit: Int, callback: ([Message]) -> ()) {
         self.listThread(thread, topic: topic, lastSequence: lastSequence, limit: limit, choose: "latest", callback: callback)
     }
     
-    private func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
+    public func addCallback(uuid: String, callback: (JSON) -> (Bool)) {
         if self.requestCallbacks[uuid] == nil {
             requestCallbacks[uuid] = [callback]
         } else {
