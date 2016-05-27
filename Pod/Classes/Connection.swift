@@ -15,6 +15,7 @@ public class Connection {
     private var connectionStarted = false
     public var auth: Authentication = Authentication()
     public var onConnect: ((Void) -> Void)?
+    public var onMessage: ((Message) -> Void)?
     public var onDisconnect: ((NSError?) -> Void)?
     public var onText: ((String) -> Void)?
     private var requestCallbacks: [String : [(JSON) -> (Bool)]] = [:]
@@ -68,6 +69,16 @@ public class Connection {
         
         let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
         let json = JSON(data: jsonData!)
+        
+        if json[0]["ModelClass"].string == "message" {
+            for (_,eventJson):(String, JSON) in json {
+                if let om = self.onMessage {
+                    let message = Message(json: eventJson["Payload"])
+                    om(message)
+                }
+            }
+            return
+        }
         
         var objectId = json["Id"].string
         if objectId == nil {
@@ -247,7 +258,7 @@ public class Connection {
         self.sendObject(["action":"delete","model":"threadmember","mailbox_id":mem.mailboxId,"thread_id":mem.threadId])
     }
     
-    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, follow: Bool, callback: ([Message]) -> (Bool)) {
+    public func listThread(thread: Thread,topic: String, lastSequence: Int64, limit: Int, callback: ([Message]) -> (Bool)) {
         let rid = NSUUID().UUIDString
         self.addCallback(rid) { (json) -> (Bool) in
             var messages = [Message]()
@@ -255,11 +266,8 @@ public class Connection {
                 for messageJson in listResponse {
                     messages.append(Message(json: messageJson))
                 }
-                var rv = callback(messages)
-                if follow == false {
-                    rv = true
-                }
-                return rv
+                callback(messages)
+                return true
             }
             
             return false
@@ -271,7 +279,6 @@ public class Connection {
             "topic" : topic,
             "lastsequence" : "\(lastSequence)",
             "limit":"\(limit)",
-            "follow" : "\(follow)",
             "rid" : rid
         ])
     }

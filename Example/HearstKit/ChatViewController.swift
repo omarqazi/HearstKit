@@ -84,11 +84,15 @@ class ChatViewController: SLKTextViewController {
             self.attemptConnection()
         }
         
+        self.chatServer.onMessage = { msg in
+            print(msg.serverRepresentation())
+        }
+        
         self.chatServer.onConnect = {
             print("Connected using HearstKit")
             let thread = Thread()
             thread.uuid = "14602a52-0018-44c0-8b28-4039c7e5e52c"
-            self.chatServer.listThread(thread, topic: "typing-notification", lastSequence: 20, limit: 100, follow: true, callback: { (msgs) -> (Bool) in
+            self.chatServer.listThread(thread, topic: "typing-notification", lastSequence: 20, limit: 100, callback: { (msgs) -> (Bool) in
                 print("GOT MESSAGES",msgs)
                 return false
             })
@@ -215,6 +219,7 @@ class ChatViewController: SLKTextViewController {
         socket.onDisconnect = { (error: NSError?) in
             print("oldsocket is disconnected: \(error?.localizedDescription)")
         }
+        
         //websocketDidReceiveMessage
         socket.onText = { (text: String) in
             let jsonData = text.dataUsingEncoding(NSUTF8StringEncoding)
@@ -359,15 +364,4 @@ class ChatViewController: SLKTextViewController {
             }
         }
     }
-    
-    /*
-    // MARK: - Navigation
-    
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
-    
 }
