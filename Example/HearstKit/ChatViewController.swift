@@ -7,19 +7,29 @@ import AudioToolbox
 import FBSDKCoreKit
 
 class ChatViewController: SLKTextViewController {
-    var messages = [Message]()
-    var chatServer = Connection(serverDomain: "chat.smick.co")
+    // For sending & receiving chat messages:
+    var chatServer = Connection(serverDomain: "chat.smick.co") // Connection to server
+    var publicThread = Thread()
+    var messages = [Message]() // we'll keep message data from the server in here
+    
+    // User Facebook info
+    var facebookUserId: String?
+    var facebookUserName: String?
+    
+    // Info for connecting to hearst
     var mailboxId = ""
     var threadId = ""
-    var sessionToken = ""
+    
+    // variables for tracking UI state
     var lastOffsets = [Float]()
     var bottomRow: NSIndexPath?
     var lockScrolling = false // don't scroll the view when the user is scrolling
     var scrollLockTimer: NSTimer?
+    
+    // Timer to limit how often we send the typing indicator
     var sentTypingIndicatorRecently = false
     var typingIndicatorTimer: NSTimer?
-    var facebookUserId: String?
-    var facebookUserName: String?
+
     
     required init(coder decoder: NSCoder) {
         super.init(tableViewStyle: .Plain)
@@ -44,7 +54,7 @@ class ChatViewController: SLKTextViewController {
     func requestFacebookProfile() {
         FBSDKGraphRequest(graphPath: "me?fields=id,name", parameters: nil).startWithCompletionHandler({ (conn, result, err) -> Void in
             if err != nil {
-                self.showLogin(self)
+                self.navigationController?.popViewControllerAnimated(true)
                 return
             }
             
@@ -57,43 +67,45 @@ class ChatViewController: SLKTextViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
-        if FBSDKAccessToken.currentAccessToken() != nil {
-            self.requestFacebookProfile()
+        if FBSDKAccessToken.currentAccessToken() != nil { // if we're authorized with Facebook
+            self.requestFacebookProfile() // get the user's info
         } else {
-            self.setTextInputbarHidden(true, animated: false)
+            self.setTextInputbarHidden(true, animated: false) // otherwise they can't send messages
         }
         
+        // Setup UI
         self.title = "Hearst Chat"
         self.inverted = false
         self.textInputbar.textView.placeholder = "Type some shit"
         self.keyboardPanningEnabled = true
+        
         self.chatServer.onConnect = {
-            print("Connected using HearstKit")
-            let thread = self.chatServer.knownThread(self.threadId)
+            print("Connected to Hearst server")
+            self.publicThread = self.chatServer.knownThread(self.threadId)
             
             // get the 20 most recent chat messages we don't already have
-            thread.recentMessages(340, limit: 20, topicFilter: "chat-message", callback: { msgs in
+            self.publicThread.recentMessages(340, limit: 20, topicFilter: "chat-message", callback: { msgs in
                 for msg in msgs {
                     self.addNextMessage(msg)
                 }
             })
             
             // add new messages as we get them
-            thread.onMessage({ (msg) -> (Bool) in
+            self.publicThread.onMessage({ (msg) -> (Bool) in
                 switch msg.topic {
-                    case "chat-message":
-                        self.addNextMessage(msg)
-                    case "typing-notification":
-                        print("AyYYY lmao")
+                case "chat-message":
+                    self.addNextMessage(msg)
+                case "typing-notification":
+                    print("ayyyyy lmao")
                 default:
-                    print("HUH wtf is this",msg.topic)
+                    print("huh WTF is this topic:",msg.topic)
                 }
                 return false
             })
         }
         
         self.chatServer.onDisconnect = { err in
-            print("NEW SOCKET DISCONNECTED!!", err)
+            print("Disconnected from Hearst server", err)
         }
         
         self.attemptConnection()
@@ -111,11 +123,13 @@ class ChatViewController: SLKTextViewController {
         if !sentTypingIndicatorRecently && !textView.text.isEmpty {
             sentTypingIndicatorRecently = true
             self.sendTypingNotification(true)
-            NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChatViewController.typingNotificationNoLongerRecent(_:)), userInfo: nil, repeats: false)
+            self.typingIndicatorTimer = NSTimer.scheduledTimerWithTimeInterval(5.0, target: self, selector: #selector(ChatViewController.typingNotificationNoLongerRecent(_:)), userInfo: nil, repeats: false)
         } else if textView.text.isEmpty {
+            self.typingIndicatorTimer?.invalidate()
             self.sendTypingNotification(false)
             sentTypingIndicatorRecently = false
         }
+        
         super.textViewDidChange(textView)
     }
     
@@ -124,41 +138,28 @@ class ChatViewController: SLKTextViewController {
     }
     
     func sendTypingNotification(isTyping: Bool) {
-        if self.facebookUserId == nil || self.facebookUserName == nil {
-            return
+        if self.facebookUserId != nil && self.facebookUserName != nil {
+            let msg = Message()
+            msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
+            msg.topic = "typing-notification"
+            msg.payload = JSON(["is_typing" : isTyping.description])
+            
+            self.publicThread.sendMessage(msg) { msgx in
+            }
         }
-        
-        let msg = Message()
-        msg.threadId = self.threadId
-        msg.senderId = self.mailboxId
-        msg.body = ""
-        msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
-        msg.topic = "typing-notification"
-        msg.payload = JSON(["is_typing" : isTyping.description])
-        
-        self.chatServer.createMessage(msg) { msgx in
-        }
-    }
-    
-    func showLogin(sender: AnyObject!) {
-        self.performSegueWithIdentifier("PresentLogin", sender: self)
     }
     
     func sendMessage(aMessage: String) {
-        if self.facebookUserId == nil || self.facebookUserName == nil {
-            return
-        }
-        
-        sentTypingIndicatorRecently = false
-        
-        let msg = Message()
-        msg.threadId = self.threadId
-        msg.senderId = self.mailboxId
-        msg.body = aMessage
-        msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
-        msg.topic = "chat-message"
-        
-        self.chatServer.createMessage(msg) { msg in
+        if self.facebookUserId != nil && self.facebookUserName != nil {
+            self.typingIndicatorTimer?.invalidate()
+            sentTypingIndicatorRecently = false
+            
+            let msg = Message()
+            msg.body = aMessage
+            msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
+            msg.topic = "chat-message"
+            self.publicThread.sendMessage(msg, callback: { (msg) in
+            })
         }
     }
     
@@ -168,7 +169,6 @@ class ChatViewController: SLKTextViewController {
             if let responseJson = response.result.value {
                 self.mailboxId = responseJson["mailbox_id"] as! String
                 self.threadId = responseJson["thread_id"] as! String
-                self.sessionToken = responseJson["session_token"] as! String
                 
                 let authStrategy = Authentication()
                 authStrategy.strategy = .Session
