@@ -109,6 +109,7 @@ public class Mailbox {
         }
         
         jsonDateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"
+        jsonDateFormatter.timeZone = NSTimeZone(abbreviation: "UTC")
         if let createdAt = json["CreatedAt"].string {
             if let createdDate = jsonDateFormatter.dateFromString(createdAt) {
                 self.createdAt = createdDate
