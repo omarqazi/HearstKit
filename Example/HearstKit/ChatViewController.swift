@@ -208,9 +208,11 @@ class ChatViewController: SLKTextViewController {
         self.tableView?.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         if !self.lockScrolling {
             self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
+        } else {
+            AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
         }
     }
-    
+
     func removeScrollLock(sender: AnyObject) {
         self.lockScrolling = false
     }
