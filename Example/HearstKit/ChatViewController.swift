@@ -96,7 +96,7 @@ class ChatViewController: SLKTextViewController {
                 case "chat-message":
                     self.addNextMessage(msg)
                 case "typing-notification":
-                    print("ayyyyy lmao")
+                    self.handleTypingNotification(msg)
                 default:
                     print("huh WTF is this topic:",msg.topic)
                 }
@@ -109,6 +109,22 @@ class ChatViewController: SLKTextViewController {
         }
         
         self.attemptConnection()
+    }
+    
+    func handleTypingNotification(msg: Message) {
+        if msg.topic == "typing-notification" {
+            if let isTyping = msg.payload["is_typing"].string {
+                if let senderName = msg.labels["SenderFacebookName"].string {
+                    if senderName != self.facebookUserName {
+                        if isTyping == "true" {
+                            self.typingIndicatorView?.insertUsername(senderName)
+                        } else {
+                            self.typingIndicatorView?.removeUsername(senderName)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -185,6 +201,7 @@ class ChatViewController: SLKTextViewController {
         if message.topic != "chat-message" {
             return
         }
+        self.typingIndicatorView?.removeUsername(message.labels["SenderFacebookName"].string)
         let insertionIndex = messages.count
         messages.insert(message, atIndex: insertionIndex)
         let indexPath = NSIndexPath(forRow: insertionIndex, inSection: 0)

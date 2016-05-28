@@ -12,6 +12,8 @@
 		0768DC3E1CCD42600048D956 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3C1CCD42600048D956 /* Authentication.swift */; };
 		0768DC401CCD42BA0048D956 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3F1CCD42BA0048D956 /* Connection.swift */; };
 		0768DC411CCD42BA0048D956 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3F1CCD42BA0048D956 /* Connection.swift */; };
+		077404581CF9189500E23AFE /* HearstKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 077404571CF9189500E23AFE /* HearstKit.framework */; };
+		077404591CF9189500E23AFE /* HearstKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 077404571CF9189500E23AFE /* HearstKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		078F9F7E1CDFD435009F070A /* Hearst.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078F9F7D1CDFD435009F070A /* Hearst.swift */; };
 		078F9F811CDFD44B009F070A /* ChatViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078F9F7F1CDFD44B009F070A /* ChatViewCell.swift */; };
 		078F9F821CDFD44B009F070A /* ChatViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 078F9F801CDFD44B009F070A /* ChatViewCell.xib */; };
@@ -45,9 +47,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		0774045A1CF9189500E23AFE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				077404591CF9189500E23AFE /* HearstKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0768DC3C1CCD42600048D956 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Authentication.swift; path = ../Pod/Classes/Authentication.swift; sourceTree = "<group>"; };
 		0768DC3F1CCD42BA0048D956 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = ../Pod/Classes/Connection.swift; sourceTree = "<group>"; };
+		077404571CF9189500E23AFE /* HearstKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = HearstKit.framework; path = "/Users/Omar/Library/Developer/Xcode/DerivedData/HearstKit-ezhdielnkokgzeheqlyjqibcqetm/Build/Products/Debug-iphoneos/HearstKit.framework"; sourceTree = "<absolute>"; };
 		078F9F7D1CDFD435009F070A /* Hearst.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hearst.swift; sourceTree = "<group>"; };
 		078F9F7F1CDFD44B009F070A /* ChatViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewCell.swift; sourceTree = "<group>"; };
 		078F9F801CDFD44B009F070A /* ChatViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatViewCell.xib; sourceTree = "<group>"; };
@@ -87,6 +104,7 @@
 			files = (
 				07CB25221C680E760051A974 /* Security.framework in Frameworks */,
 				DD8F0EEEDEA50355CE6693E4 /* Pods_HearstKit_Example.framework in Frameworks */,
+				077404581CF9189500E23AFE /* HearstKit.framework in Frameworks */,
 				067D0EB73A27F9D46B79FA37 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,6 +147,7 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
+				077404571CF9189500E23AFE /* HearstKit.framework */,
 				070C3EC91C6172C5005A18C5 /* Client */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for HearstKit */,
@@ -226,6 +245,7 @@
 				607FACCE1AFB9204008FA782 /* Resources */,
 				9D5BE2A11702E03C2E8BB49B /* Embed Pods Frameworks */,
 				EA8243E6156DA04E2A3C06CB /* Copy Pods Resources */,
+				0774045A1CF9189500E23AFE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
