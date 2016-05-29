@@ -160,8 +160,7 @@ class ChatViewController: SLKTextViewController {
             msg.topic = "typing-notification"
             msg.payload = JSON(["is_typing" : isTyping.description])
             
-            self.publicThread.sendMessage(msg) { msgx in
-            }
+            self.publicThread.sendMessage(msg)
         }
     }
     
@@ -174,8 +173,7 @@ class ChatViewController: SLKTextViewController {
             msg.body = aMessage
             msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
             msg.topic = "chat-message"
-            self.publicThread.sendMessage(msg, callback: { (msg) in
-            })
+            self.publicThread.sendMessage(msg)
         }
     }
     
@@ -270,6 +268,7 @@ class ChatViewController: SLKTextViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
+    
     
     override func didChangeKeyboardStatus(status: SLKKeyboardStatus) {
         super.didChangeKeyboardStatus(status)
