@@ -12,6 +12,10 @@ class ChatViewController: SLKTextViewController {
     var publicThread = Thread()
     var messages = [Message]() // we'll keep message data from the server in here
     
+    // Info for connecting to hearst
+    var mailboxId = ""
+    var threadId = ""
+    
     // User Facebook info
     var facebookUserId: String?
     var facebookUserName: String?
@@ -19,20 +23,15 @@ class ChatViewController: SLKTextViewController {
         return ["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!]
     }
     
-    // Info for connecting to hearst
-    var mailboxId = ""
-    var threadId = ""
+    // Timer to limit how often we send the typing indicator
+    var sentTypingIndicatorRecently = false
+    var typingIndicatorTimer: NSTimer?
     
     // variables for tracking UI state
     var lastOffsets = [Float]()
     var bottomRow: NSIndexPath?
     var lockScrolling = false // don't scroll the view when the user is scrolling
     var scrollLockTimer: NSTimer?
-    
-    // Timer to limit how often we send the typing indicator
-    var sentTypingIndicatorRecently = false
-    var typingIndicatorTimer: NSTimer?
-
     
     required init(coder decoder: NSCoder) {
         super.init(tableViewStyle: .Plain)
@@ -44,29 +43,40 @@ class ChatViewController: SLKTextViewController {
         self.tableView?.registerNib(UINib(nibName: "ChatViewCell", bundle: nil), forCellReuseIdentifier: "ChatCell")
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
-    override func didPressRightButton(sender: AnyObject!) {
-        self.sendMessage(self.textView.text)
-        super.didPressRightButton(sender)
-    }
-    
-    // Get the user's name and user id from Facebook
-    func requestFacebookProfile() {
-        FBSDKGraphRequest(graphPath: "me?fields=id,name", parameters: nil).startWithCompletionHandler({ (conn, result, err) -> Void in
-            if err != nil {
-                self.navigationController?.popViewControllerAnimated(true)
-                return
-            }
-            
-            if let respDict = result as? [String : String] {
-                self.facebookUserId = respDict["id"]
-                self.facebookUserName = respDict["name"]
-                self.setTextInputbarHidden(false, animated: false)
+    func chatServerConnected() {
+        print("Connected to Hearst server")
+        self.publicThread = self.chatServer.knownThread(self.threadId)
+        var lastIndex: Int64 = 0
+        if self.messages.count > 0 {
+            lastIndex = self.messages.last!.index
+        }
+        
+        // get the 20 most recent chat messages we don't already have
+        self.publicThread.recentMessages(lastIndex, limit: 20, topicFilter: "chat-message", callback: { msgs in
+            for msg in msgs {
+                self.displayNewMessage(msg)
             }
         })
+        
+        // add new messages as we get them
+        self.publicThread.onMessage(self.chatServerGotMessage)
+        self.chatServer.onDisconnect = self.chatServerDisconnected
+    }
+    
+    func chatServerGotMessage(msg: Message) -> Bool {
+        switch msg.topic {
+        case "chat-message":
+            self.displayNewMessage(msg)
+        case "typing-notification":
+            self.handleTypingNotification(msg)
+        default:
+            print("huh WTF is this topic:",msg.topic)
+        }
+        return false
+    }
+    
+    func chatServerDisconnected(err: NSError?) {
+        print("Disconnected from Hearst server", err)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -82,61 +92,12 @@ class ChatViewController: SLKTextViewController {
         self.textInputbar.textView.placeholder = "Type some shit"
         self.keyboardPanningEnabled = true
         
-        self.chatServer.onConnect = {
-            print("Connected to Hearst server")
-            self.publicThread = self.chatServer.knownThread(self.threadId)
-            var lastIndex: Int64 = 0
-            if self.messages.count > 0 {
-                lastIndex = self.messages.last!.index
-            }
-            
-            // get the 20 most recent chat messages we don't already have
-            self.publicThread.recentMessages(lastIndex, limit: 20, topicFilter: "chat-message", callback: { msgs in
-                for msg in msgs {
-                    self.addNextMessage(msg)
-                }
-            })
-            
-            // add new messages as we get them
-            self.publicThread.onMessage({ (msg) -> (Bool) in
-                switch msg.topic {
-                case "chat-message":
-                    self.addNextMessage(msg)
-                case "typing-notification":
-                    self.handleTypingNotification(msg)
-                default:
-                    print("huh WTF is this topic:",msg.topic)
-                }
-                return false
-            })
-        }
-        
-        self.chatServer.onDisconnect = { err in
-            print("Disconnected from Hearst server", err)
-        }
-        
+        self.chatServer.onConnect = self.chatServerConnected
         self.attemptConnection()
     }
     
-    func handleTypingNotification(msg: Message) {
-        if let isTyping = msg.payload["is_typing"].string {
-            if let senderName = msg.labels["SenderFacebookName"].string {
-                if senderName != self.facebookUserName {
-                    if isTyping == "true" {
-                        self.typingIndicatorView?.insertUsername(senderName)
-                    } else {
-                        self.typingIndicatorView?.removeUsername(senderName)
-                    }
-                }
-            }
-        }
-    }
-    
     override func viewWillDisappear(animated: Bool) {
-        if self.chatServer.socket.isConnected {
-            self.chatServer.disconnect()
-        } else {
-        }
+        self.chatServer.disconnect()
     }
     
     override func textViewDidChange(textView: UITextView) {
@@ -168,17 +129,51 @@ class ChatViewController: SLKTextViewController {
         }
     }
     
+    // Send a chat message to the server
     func sendMessage(aMessage: String) {
-        if self.facebookUserId != nil && self.facebookUserName != nil {
-            self.typingIndicatorTimer?.invalidate()
-            sentTypingIndicatorRecently = false
-            self.publicThread.sendMessage(
+        if self.facebookUserId != nil && self.facebookUserName != nil { // If we have our FB info
+            self.noLongerTyping() // we are no longer typing
+            
+            self.publicThread.sendMessage( // send the message
                 Message(body: aMessage, labels: self.outgoingLabels, topic: "chat-message")
             )
         }
     }
     
+    func displayNewMessage(message: Message) {
+        // We got a new chat message from a user. That means they're not typing it anymore
+        self.typingIndicatorView?.removeUsername(message.labels["SenderFacebookName"].string)
+        
+        let insertionIndex = messages.count
+        let indexPath = NSIndexPath(forRow: insertionIndex, inSection: 0)
+
+        messages.insert(message, atIndex: insertionIndex) // store the message in memory and
+        self.tableView?.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic) // display it
+        
+        if !self.lockScrolling { // if scrolling is not locked
+            // scroll to the new message
+            self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
+        } else {
+            // otherwise vibrate
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        }
+    }
     
+    func handleTypingNotification(msg: Message) {
+        if let isTyping = msg.payload["is_typing"].string {
+            if let senderName = msg.labels["SenderFacebookName"].string {
+                if senderName != self.facebookUserName {
+                    if isTyping == "true" {
+                        self.typingIndicatorView?.insertUsername(senderName)
+                    } else {
+                        self.typingIndicatorView?.removeUsername(senderName)
+                    }
+                }
+            }
+        }
+    }
+    
+    // As of now we get the Hearst connection / auth info from a server
     func attemptConnection() -> Bool {
         Alamofire.request(.GET, "https://www.smick.tv/auth/hearstchat").responseJSON { response in
             if let responseJson = response.result.value {
@@ -194,26 +189,6 @@ class ChatViewController: SLKTextViewController {
             }
         }
         return true
-    }
-    
-    func addNextMessage(message: Message) {
-        if message.topic != "chat-message" {
-            return
-        }
-        self.typingIndicatorView?.removeUsername(message.labels["SenderFacebookName"].string)
-        let insertionIndex = messages.count
-        messages.insert(message, atIndex: insertionIndex)
-        let indexPath = NSIndexPath(forRow: insertionIndex, inSection: 0)
-        self.tableView?.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-        if !self.lockScrolling {
-            self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
-        } else {
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-        }
-    }
-
-    func removeScrollLock(sender: AnyObject) {
-        self.lockScrolling = false
     }
     
     override func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -247,6 +222,38 @@ class ChatViewController: SLKTextViewController {
         }
     }
     
+    func removeScrollLock(sender: AnyObject) {
+        self.lockScrolling = false
+    }
+    
+    override func didPressRightButton(sender: AnyObject!) {
+        self.sendMessage(self.textView.text)
+        super.didPressRightButton(sender)
+    }
+    
+    // Get the user's name and user id from Facebook
+    func requestFacebookProfile() {
+        FBSDKGraphRequest(graphPath: "me?fields=id,name", parameters: nil).startWithCompletionHandler({ (conn, result, err) -> Void in
+            if err != nil {
+                self.navigationController?.popViewControllerAnimated(true)
+                return
+            }
+            
+            if let respDict = result as? [String : String] {
+                self.facebookUserId = respDict["id"]
+                self.facebookUserName = respDict["name"]
+                self.setTextInputbarHidden(false, animated: false)
+            }
+        })
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("ChatCell", forIndexPath: indexPath) as! ChatViewCell
+        let msg = messages[indexPath.row]
+        cell.message = msg
+        return cell
+    }
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
@@ -259,29 +266,28 @@ class ChatViewController: SLKTextViewController {
         return 75.0
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("ChatCell", forIndexPath: indexPath) as! ChatViewCell
-        let msg = messages[indexPath.row]
-        cell.message = msg
-        return cell
-    }
-    
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-    }
-    
-    
     override func didChangeKeyboardStatus(status: SLKKeyboardStatus) {
         super.didChangeKeyboardStatus(status)
+        
         let willChange = (status == SLKKeyboardStatus.WillShow || status == SLKKeyboardStatus.WillHide)
         let didChange = (status == SLKKeyboardStatus.DidShow || status == SLKKeyboardStatus.DidHide)
-        if willChange {
-            let lastVisibleIndexPath = self.tableView?.indexPathsForVisibleRows?.last
-            self.bottomRow = lastVisibleIndexPath
-        } else if didChange && self.bottomRow != nil {
-            if !self.lockScrolling {
+        
+        if willChange { // if the keyboard status is changing
+            self.bottomRow = self.tableView?.indexPathsForVisibleRows?.last // remember the bottom row
+        } else if didChange && self.bottomRow != nil { // and then afterwards
+            if !self.lockScrolling { // if the user isn't already scrolling
+                // put the bottom row back at the bottom
                 self.tableView?.scrollToRowAtIndexPath(bottomRow!, atScrollPosition: .Bottom, animated: true)
             }
         }
+    }
+    
+    func noLongerTyping() {
+        self.typingIndicatorTimer?.invalidate()
+        sentTypingIndicatorRecently = false
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
 }
