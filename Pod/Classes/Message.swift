@@ -33,6 +33,32 @@ public class Message {
         return relativeDateFormatter!
     }
     
+    public convenience init(body: String) {
+        self.init()
+        self.body = body
+    }
+    
+    public convenience init(body: String, topic: String) {
+        self.init()
+        self.body = body
+        self.topic = topic
+    }
+    
+    public convenience init(body: String, labels: AnyObject, topic: String) {
+        self.init()
+        self.body = body
+        self.labels = JSON(labels)
+        self.topic = topic
+    }
+    
+    public convenience init(payload: AnyObject, labels: AnyObject, topic: String) {
+        self.init()
+        self.body = ""
+        self.payload = JSON(payload)
+        self.labels = JSON(labels)
+        self.topic = topic
+    }
+    
     public convenience init(json: JSON) {
         self.init()
         self.parse(json)
