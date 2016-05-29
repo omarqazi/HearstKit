@@ -12,9 +12,11 @@ PODS:
     - FBSDKCoreKit
   - HearstKit (0.1.0):
     - Alamofire
+    - SQLite.swift
     - Starscream
     - SwiftyJSON
   - SlackTextViewController (1.9.3)
+  - SQLite.swift (0.10.1)
   - Starscream (1.1.1)
   - SwiftyJSON (2.3.2)
 
@@ -36,8 +38,9 @@ SPEC CHECKSUMS:
   Bolts: a0058fa3b331c5a1e4402d534f2dae36dbff31e4
   FBSDKCoreKit: 686ac982723a14ec9ddb85e2f81235d7706c891b
   FBSDKLoginKit: bade9fc78277764149ccc5bfaadbf13c83175c6a
-  HearstKit: 0c0bee719cbbe5702149602d0b29db63251e104f
+  HearstKit: f3ec7e259917b2ca4b9928442a9d26d8cd49ce16
   SlackTextViewController: bd2a34c188d4f7dec93cf42388f38551263fac82
+  SQLite.swift: 6a6e4b034efc317ce4e203b6af2d3024fee2b570
   Starscream: d74dd8d122a6abd244d8d5e51f32891c796d0827
   SwiftyJSON: 04ccea08915aa0109039157c7974cf0298da292a
 
