@@ -15,6 +15,9 @@ class ChatViewController: SLKTextViewController {
     // User Facebook info
     var facebookUserId: String?
     var facebookUserName: String?
+    var outgoingLabels: [String : String] {
+        return ["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!]
+    }
     
     // Info for connecting to hearst
     var mailboxId = ""
@@ -82,9 +85,13 @@ class ChatViewController: SLKTextViewController {
         self.chatServer.onConnect = {
             print("Connected to Hearst server")
             self.publicThread = self.chatServer.knownThread(self.threadId)
+            var lastIndex: Int64 = 0
+            if self.messages.count > 0 {
+                lastIndex = self.messages.last!.index
+            }
             
             // get the 20 most recent chat messages we don't already have
-            self.publicThread.recentMessages(340, limit: 20, topicFilter: "chat-message", callback: { msgs in
+            self.publicThread.recentMessages(lastIndex, limit: 20, topicFilter: "chat-message", callback: { msgs in
                 for msg in msgs {
                     self.addNextMessage(msg)
                 }
@@ -112,15 +119,13 @@ class ChatViewController: SLKTextViewController {
     }
     
     func handleTypingNotification(msg: Message) {
-        if msg.topic == "typing-notification" {
-            if let isTyping = msg.payload["is_typing"].string {
-                if let senderName = msg.labels["SenderFacebookName"].string {
-                    if senderName != self.facebookUserName {
-                        if isTyping == "true" {
-                            self.typingIndicatorView?.insertUsername(senderName)
-                        } else {
-                            self.typingIndicatorView?.removeUsername(senderName)
-                        }
+        if let isTyping = msg.payload["is_typing"].string {
+            if let senderName = msg.labels["SenderFacebookName"].string {
+                if senderName != self.facebookUserName {
+                    if isTyping == "true" {
+                        self.typingIndicatorView?.insertUsername(senderName)
+                    } else {
+                        self.typingIndicatorView?.removeUsername(senderName)
                     }
                 }
             }
@@ -155,12 +160,11 @@ class ChatViewController: SLKTextViewController {
     
     func sendTypingNotification(isTyping: Bool) {
         if self.facebookUserId != nil && self.facebookUserName != nil {
-            let msg = Message()
-            msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
-            msg.topic = "typing-notification"
-            msg.payload = JSON(["is_typing" : isTyping.description])
-            
-            self.publicThread.sendMessage(msg)
+            self.publicThread.sendMessage(Message(
+                payload: ["is_typing" : isTyping.description],
+                labels: self.outgoingLabels,
+                topic: "typing-notification"
+            ))
         }
     }
     
@@ -168,12 +172,9 @@ class ChatViewController: SLKTextViewController {
         if self.facebookUserId != nil && self.facebookUserName != nil {
             self.typingIndicatorTimer?.invalidate()
             sentTypingIndicatorRecently = false
-            
-            let msg = Message()
-            msg.body = aMessage
-            msg.labels = JSON(["SenderFacebookName" : self.facebookUserName!,"SenderFacebookId" : self.facebookUserId!])
-            msg.topic = "chat-message"
-            self.publicThread.sendMessage(msg)
+            self.publicThread.sendMessage(
+                Message(body: aMessage, labels: self.outgoingLabels, topic: "chat-message")
+            )
         }
     }
     
@@ -207,7 +208,7 @@ class ChatViewController: SLKTextViewController {
         if !self.lockScrolling {
             self.tableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
         } else {
-            AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
         }
     }
 
