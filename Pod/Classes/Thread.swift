@@ -66,6 +66,16 @@ public class Thread {
 
     }
     
+    public func addMember(member: Member, callback: (Member) -> ()) {
+        member.threadId = self.uuid
+        self.serverConnection?.createMember(member, callback: callback)
+    }
+    
+    public func addMember(member: Member) {
+        self.addMember(member) { mem in
+        }
+    }
+    
     public func sendMessage(message: Message) {
         self.sendMessage(message) { (msg) in
         }

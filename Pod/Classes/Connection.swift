@@ -183,7 +183,7 @@ public class Connection {
         }
     }
     
-    public func createMember(mem: Member, callback: (Member) -> (Bool)) {
+    public func createMember(mem: Member, callback: (Member) -> ()) {
         self.createModel("threadmember", payload: mem.serverRepresentation()) { (json) -> (Bool) in
             let mem = Member(json: json)
             mem.serverConnection = self
