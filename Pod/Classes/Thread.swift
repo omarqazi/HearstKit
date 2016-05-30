@@ -86,7 +86,7 @@ public class Thread {
     }
     
     public func onMessage(callback: (Message) -> (Bool)) {
-        self.serverConnection?.addCallback("notification-\(self.uuid)", callback: { (json) -> (Bool) in
+        self.serverConnection?.replaceCallback("notification-\(self.uuid)", callback: { (json) -> (Bool) in
             for (_,eventJson):(String, JSON) in json {
                 let message = Message(json: eventJson["Payload"])
                 let rv = callback(message)

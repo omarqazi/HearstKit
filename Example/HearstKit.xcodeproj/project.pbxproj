@@ -106,47 +106,6 @@
 			<key>sourceTree</key>
 			<string>&lt;absolute&gt;</string>
 		</dict>
-		<key>077404581CF9189500E23AFE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>077404571CF9189500E23AFE</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>077404591CF9189500E23AFE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>077404571CF9189500E23AFE</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-			<key>settings</key>
-			<dict>
-				<key>ATTRIBUTES</key>
-				<array>
-					<string>CodeSignOnCopy</string>
-					<string>RemoveHeadersOnCopy</string>
-				</array>
-			</dict>
-		</dict>
-		<key>0774045A1CF9189500E23AFE</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>dstPath</key>
-			<string></string>
-			<key>dstSubfolderSpec</key>
-			<string>10</string>
-			<key>files</key>
-			<array>
-				<string>077404591CF9189500E23AFE</string>
-			</array>
-			<key>isa</key>
-			<string>PBXCopyFilesBuildPhase</string>
-			<key>name</key>
-			<string>Embed Frameworks</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
 		<key>078F9F7D1CDFD435009F070A</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -246,6 +205,47 @@
 			<string>07AB74031CDFD2B800ED88A3</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+		</dict>
+		<key>07C43C521CFC388400635B22</key>
+		<dict>
+			<key>fileRef</key>
+			<string>077404571CF9189500E23AFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>07C43C531CFC388400635B22</key>
+		<dict>
+			<key>fileRef</key>
+			<string>077404571CF9189500E23AFE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>07C43C541CFC388400635B22</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string></string>
+			<key>dstSubfolderSpec</key>
+			<string>10</string>
+			<key>files</key>
+			<array>
+				<string>07C43C531CFC388400635B22</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>name</key>
+			<string>Embed Frameworks</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
 		</dict>
 		<key>07CB25211C680E760051A974</key>
 		<dict>
@@ -672,7 +672,7 @@
 			<array>
 				<string>07CB25221C680E760051A974</string>
 				<string>DD8F0EEEDEA50355CE6693E4</string>
-				<string>077404581CF9189500E23AFE</string>
+				<string>07C43C521CFC388400635B22</string>
 				<string>067D0EB73A27F9D46B79FA37</string>
 			</array>
 			<key>isa</key>
@@ -708,7 +708,7 @@
 				<string>607FACCE1AFB9204008FA782</string>
 				<string>9D5BE2A11702E03C2E8BB49B</string>
 				<string>EA8243E6156DA04E2A3C06CB</string>
-				<string>0774045A1CF9189500E23AFE</string>
+				<string>07C43C541CFC388400635B22</string>
 			</array>
 			<key>buildRules</key>
 			<array/>

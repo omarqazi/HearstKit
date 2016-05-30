@@ -12,11 +12,11 @@ import SwiftyJSON
 
 public class Connection {
     public var socket: WebSocket
-    private var connectionStarted = false
     public var auth: Authentication = Authentication()
     public var onConnect: ((Void) -> Void)?
     public var onMessage: ((Message) -> Void)?
     public var onDisconnect: ((NSError?) -> Void)?
+    public var reconnectAutomatically: Bool = true
     public var onText: ((String) -> Void)?
     private var requestCallbacks: [String : [(JSON) -> (Bool)]] = [:]
     private var writeQueue: dispatch_queue_t = dispatch_queue_create("co.smick.hearstkit.writeq", DISPATCH_QUEUE_SERIAL)
@@ -57,6 +57,10 @@ public class Connection {
     }
     
     private func socketDidDisconnect(error: NSError?) {
+        if self.reconnectAutomatically {
+            self.connect()
+        }
+        
         if let odc = self.onDisconnect {
             odc(error)
         }
@@ -343,5 +347,9 @@ public class Connection {
         } else {
             requestCallbacks[uuid]?.append(callback)
         }
+    }
+    
+    public func replaceCallback(uuid: String, callback: (JSON) -> (Bool)) {
+        requestCallbacks[uuid] = [callback]
     }
 }

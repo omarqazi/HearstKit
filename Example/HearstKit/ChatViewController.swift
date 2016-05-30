@@ -77,6 +77,7 @@ class ChatViewController: SLKTextViewController {
     
     func chatServerDisconnected(err: NSError?) {
         print("Disconnected from Hearst server", err)
+        print("Reconnecting...")
     }
     
     override func viewWillAppear(animated: Bool) {

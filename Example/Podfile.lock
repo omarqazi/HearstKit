@@ -26,6 +26,7 @@ DEPENDENCIES:
   - FBSDKLoginKit
   - HearstKit (from `../`)
   - SlackTextViewController
+  - SQLite.swift
   - Starscream
   - SwiftyJSON
 
