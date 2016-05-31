@@ -13,7 +13,7 @@
 		074477991CFCE35F00F942DF /* HearstStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074477951CFCE21400F942DF /* HearstStore.swift */; };
 		0744779B1CFD418600F942DF /* Migrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0744779A1CFD418600F942DF /* Migrator.swift */; };
 		0744779C1CFD418600F942DF /* Migrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0744779A1CFD418600F942DF /* Migrator.swift */; };
-		0744779F1CFD57D800F942DF /* MigratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0744779D1CFD57D800F942DF /* MigratorTest.swift */; };
+		074477A21CFD7F7B00F942DF /* MigratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 074477A01CFD7F7B00F942DF /* MigratorTest.swift */; };
 		0768DC3D1CCD42600048D956 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3C1CCD42600048D956 /* Authentication.swift */; };
 		0768DC3E1CCD42600048D956 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3C1CCD42600048D956 /* Authentication.swift */; };
 		0768DC401CCD42BA0048D956 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0768DC3F1CCD42BA0048D956 /* Connection.swift */; };
@@ -71,7 +71,7 @@
 		074477951CFCE21400F942DF /* HearstStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HearstStore.swift; path = ../Pod/Classes/HearstStore.swift; sourceTree = "<group>"; };
 		074477971CFCE30500F942DF /* HearstStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HearstStoreTest.swift; path = ../../Tests/HearstStoreTest.swift; sourceTree = "<group>"; };
 		0744779A1CFD418600F942DF /* Migrator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Migrator.swift; path = ../Pod/Classes/Migrator.swift; sourceTree = "<group>"; };
-		0744779D1CFD57D800F942DF /* MigratorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MigratorTest.swift; path = ../Tests/MigratorTest.swift; sourceTree = SOURCE_ROOT; };
+		074477A01CFD7F7B00F942DF /* MigratorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MigratorTest.swift; path = ../Tests/MigratorTest.swift; sourceTree = SOURCE_ROOT; };
 		0768DC3C1CCD42600048D956 /* Authentication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Authentication.swift; path = ../Pod/Classes/Authentication.swift; sourceTree = "<group>"; };
 		0768DC3F1CCD42BA0048D956 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = ../Pod/Classes/Connection.swift; sourceTree = "<group>"; };
 		077404571CF9189500E23AFE /* HearstKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = HearstKit.framework; path = "/Users/Omar/Library/Developer/Xcode/DerivedData/HearstKit-ezhdielnkokgzeheqlyjqibcqetm/Build/Products/Debug-iphoneos/HearstKit.framework"; sourceTree = "<absolute>"; };
@@ -211,7 +211,7 @@
 			children = (
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				074477971CFCE30500F942DF /* HearstStoreTest.swift */,
-				0744779D1CFD57D800F942DF /* MigratorTest.swift */,
+				074477A01CFD7F7B00F942DF /* MigratorTest.swift */,
 				07CB25241C680F990051A974 /* MailboxTest.swift */,
 			);
 			path = Tests;
@@ -471,6 +471,7 @@
 			files = (
 				07E980751C682D3800E8BB56 /* Mailbox.swift in Sources */,
 				07E9807B1C682D3800E8BB56 /* Thread.swift in Sources */,
+				074477A21CFD7F7B00F942DF /* MigratorTest.swift in Sources */,
 				07E980791C682D3800E8BB56 /* Message.swift in Sources */,
 				07E980771C682D3800E8BB56 /* Member.swift in Sources */,
 				074477981CFCE30500F942DF /* HearstStoreTest.swift in Sources */,
@@ -478,7 +479,6 @@
 				07CB25251C680F990051A974 /* MailboxTest.swift in Sources */,
 				0768DC3E1CCD42600048D956 /* Authentication.swift in Sources */,
 				0744779C1CFD418600F942DF /* Migrator.swift in Sources */,
-				0744779F1CFD57D800F942DF /* MigratorTest.swift in Sources */,
 				0768DC411CCD42BA0048D956 /* Connection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
