@@ -55,6 +55,6 @@ class MigratorTest: XCTestCase {
         if ve?.error != nil {
             XCTAssert(false, "Error running migration: \(ve?.error?.localizedDescription)")
         }
-        XCTAssert(self.migrator?.nextSchemaVersion() == 3)
+        XCTAssert(self.migrator!.nextSchemaVersion() == (Int64(self.migrator!.hearstMigrations.count) + 1))
     }
 }

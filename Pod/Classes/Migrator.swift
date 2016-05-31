@@ -12,10 +12,16 @@ class Migrator {
     var db: SQLite.Connection
     let versions = Table("schema_versions")
     let mailboxes = Table("mailboxes")
+    let threads = Table("threads")
+    let members = Table("thread_members")
+    let messages = Table("messages")
+    
     var hearstMigrations: [Migration] {
         return [
             Migration(up: self.migrate_1_create_versions, down: self.demigrate_1_create_versions,number: 1, name: "create-versions"),
-            Migration(up: self.migrate_2_create_mailboxes, down: self.demigrate_2_create_mailboxes,number: 2, name: "create-mailboxes")
+            Migration(up: self.migrate_2_create_mailboxes, down: self.demigrate_2_create_mailboxes,number: 2, name: "create-mailboxes"),
+            Migration(up: self.migrate_3_create_threads, down: self.demigrate_3_create_threads, number: 3, name: "create-threads"),
+            Migration(up: self.migrate_4_create_members, down: self.demigrate_4_create_members, number: 4, name: "create-members")
         ]
     }
     
@@ -133,6 +139,56 @@ class Migrator {
     func demigrate_2_create_mailboxes(migrationName: String) -> NSError? {
         do {
             try db.run(mailboxes.drop())
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func migrate_3_create_threads() -> NSError? {
+        do {
+            try db.run(threads.create() { t in
+                t.column(Expression<Int64>("id"),primaryKey: true)
+                t.column(Expression<String>("identifier"))
+                t.column(Expression<String>("domain"))
+                t.column(Expression<String>("subject"))
+                t.column(Expression<Int64>("created_at"))
+                t.column(Expression<Int64>("updated_at"))
+            })
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func demigrate_3_create_threads(migrationName: String) -> NSError? {
+        do {
+            try db.run(threads.drop())
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func migrate_4_create_members() -> NSError? {
+        do {
+            try db.run(members.create() { t in
+                t.column(Expression<Int64>("id"),primaryKey: true)
+                t.column(Expression<String>("thread_id"))
+                t.column(Expression<String>("mailbox_id"))
+                t.column(Expression<Bool>("allow_read"))
+                t.column(Expression<Bool>("allow_write"))
+                t.column(Expression<Bool>("allow_notification"))
+            })
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func demigrate_4_create_members(migrationName: String) -> NSError? {
+        do {
+            try db.run(members.drop())
         } catch let err as NSError {
             return err
         }
