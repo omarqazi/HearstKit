@@ -8,7 +8,7 @@ struct Migration {
     var name: String
 }
 
-class Migrator {
+public class Migrator {
     var db: SQLite.Connection
     let versions = Table("schema_versions")
     let mailboxes = Table("mailboxes")
@@ -21,7 +21,8 @@ class Migrator {
             Migration(up: self.migrate_1_create_versions, down: self.demigrate_1_create_versions,number: 1, name: "create-versions"),
             Migration(up: self.migrate_2_create_mailboxes, down: self.demigrate_2_create_mailboxes,number: 2, name: "create-mailboxes"),
             Migration(up: self.migrate_3_create_threads, down: self.demigrate_3_create_threads, number: 3, name: "create-threads"),
-            Migration(up: self.migrate_4_create_members, down: self.demigrate_4_create_members, number: 4, name: "create-members")
+            Migration(up: self.migrate_4_create_members, down: self.demigrate_4_create_members, number: 4, name: "create-members"),
+            Migration(up: self.migrate_5_create_messages, down: self.demigrate_5_create_messages, number: 5, name: "create-messages")
         ]
     }
     
@@ -189,6 +190,36 @@ class Migrator {
     func demigrate_4_create_members(migrationName: String) -> NSError? {
         do {
             try db.run(members.drop())
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func migrate_5_create_messages() -> NSError? {
+        do {
+            try db.run(messages.create() { t in
+                t.column(Expression<Int64>("id"),primaryKey: true)
+                t.column(Expression<String>("thread_id"))
+                t.column(Expression<String>("sender_id"))
+                t.column(Expression<Int64>("created_at"))
+                t.column(Expression<Int64>("updated_at"))
+                t.column(Expression<Int64>("expires_at"))
+                t.column(Expression<String>("topic"))
+                t.column(Expression<String>("body"))
+                t.column(Expression<String>("labels"))
+                t.column(Expression<String>("payload"))
+                t.column(Expression<Int64>("index"))
+            })
+        } catch let err as NSError {
+            return err
+        }
+        return nil
+    }
+    
+    func demigrate_5_create_messages(migrationName: String) -> NSError? {
+        do {
+            try db.run(messages.drop())
         } catch let err as NSError {
             return err
         }
