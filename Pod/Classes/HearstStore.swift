@@ -7,6 +7,11 @@ public class HearstStore {
     public var migrator: Migrator? = nil
     public var server: Connection? = nil
     
+    private var mailboxesTable = Table("mailboxes")
+    private var threadsTable = Table("threads")
+    private var membersTable = Table("thread_members")
+    private var messagesTable = Table("messages")
+    
     init(path: String, server: Connection?) {
         self.server = server
         if let err = self.openPath(path) {
@@ -32,5 +37,45 @@ public class HearstStore {
         }
         
         return nil
+    }
+    
+    public func createMailbox(mb: Mailbox, callback: (Mailbox) -> ()) -> NSError? {
+        let insertQuery = self.mailboxesTable.insert()
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(insertQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.createMailbox(mb) { (smb) in
+            // update db record
+            callback(smb)
+        }
+        
+        return dbErr
+    }
+    
+    public func getMailbox(uuid: String, callback: (Mailbox) -> ()) -> Mailbox? {
+        var dbMailbox: Mailbox? = nil
+        let uuidField = Expression<String>("uuid")
+        let query = self.mailboxesTable.filter(uuidField == uuid).limit(1)
+        
+        do {
+            for selectedMailbox in try self.db!.prepare(query) {
+                dbMailbox = Mailbox()
+                dbMailbox?.deviceId = "nigga"
+                print(selectedMailbox)
+            }
+        } catch {
+        }
+        
+        self.server?.getMailbox(uuid) { mb in
+            // insert or update mailbox
+            callback(mb)
+        }
+        
+        return dbMailbox
     }
 }
