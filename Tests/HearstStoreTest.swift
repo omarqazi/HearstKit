@@ -9,7 +9,6 @@
 import XCTest
 
 class HearstStoreTest: XCTestCase {
-    var temporaryDirectory = NSTemporaryDirectory()
     var db: HearstStore = HearstStore(path: NSTemporaryDirectory().stringByAppendingString("ayylmao.db"), domain: "chat.smick.co")
 
     override func setUp() {
