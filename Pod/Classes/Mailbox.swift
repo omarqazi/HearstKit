@@ -9,6 +9,7 @@
 import Foundation
 import Security
 import SwiftyJSON
+import SQLite
 
 let jsonDateFormatter = NSDateFormatter()
 
@@ -24,10 +25,16 @@ public class Mailbox {
     public var createdAt: NSDate = NSDate.distantPast()
     public var updatedAt: NSDate = NSDate.distantPast()
     public var serverConnection:  Connection?
+    public var dbTable = Table("mailboxes")
     
     
     public init() {
         
+    }
+    
+    public convenience init(uuid: String) {
+        self.init()
+        self.uuid = uuid
     }
     
     public convenience init(json: JSON) {
@@ -162,5 +169,46 @@ public class Mailbox {
     // Returns payloadData() as a string by assuming UTF8 string encoding type and JSON
     public func payload() -> String {
         return String(data: self.payloadData(), encoding: NSUTF8StringEncoding)!
+    }
+    
+    public func insertQuery() -> Insert {
+        let uuid = Expression<String>("uuid")
+        let publicKey = Expression<String>("public_key")
+        let deviceId = Expression<String>("device_id")
+        let downloadedAt = Expression<Int64>("downloaded_at")
+        let connectedAt = Expression<Int64>("connected_at")
+        let createdAt = Expression<Int64>("created_at")
+        let updatedAt = Expression<Int64>("updated_at")
+        
+        let insertQuery = self.dbTable.insert(
+            uuid <- self.uuid,
+            publicKey <- self.publicKeyString,
+            deviceId <- self.deviceId,
+            downloadedAt <- Int64(NSDate().timeIntervalSince1970),
+            connectedAt <- Int64(self.connectedAt.timeIntervalSince1970),
+            createdAt <- Int64(self.createdAt.timeIntervalSince1970),
+            updatedAt <- Int64(self.updatedAt.timeIntervalSince1970)
+        )
+        return insertQuery
+    }
+    
+    public func selectQuery() -> Table {
+        let uuidField = Expression<String>("uuid")
+        let selectQuery = self.dbTable.filter(uuidField == self.uuid).limit(1)
+        return selectQuery
+    }
+    
+    public func parseRow(row: Row) {
+        let uuid = Expression<String>("uuid")
+        let deviceId = Expression<String>("device_id")
+        let connectedAt = Expression<Int64>("connected_at")
+        let createdAt = Expression<Int64>("created_at")
+        let updatedAt = Expression<Int64>("updated_at")
+        
+        self.uuid = row[uuid]
+        self.deviceId = row[deviceId]
+        self.connectedAt = NSDate(timeIntervalSince1970: NSTimeInterval(row[connectedAt]))
+        self.createdAt = NSDate(timeIntervalSince1970: NSTimeInterval(row[createdAt]))
+        self.updatedAt = NSDate(timeIntervalSince1970: NSTimeInterval(row[updatedAt]))
     }
 }

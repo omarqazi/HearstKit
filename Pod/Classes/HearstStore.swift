@@ -40,7 +40,7 @@ public class HearstStore {
     }
     
     public func createMailbox(mb: Mailbox, callback: (Mailbox) -> ()) -> NSError? {
-        let insertQuery = self.mailboxesTable.insert()
+        let insertQuery = mb.insertQuery()
         var dbErr: NSError? = nil
         
         do {
@@ -59,14 +59,12 @@ public class HearstStore {
     
     public func getMailbox(uuid: String, callback: (Mailbox) -> ()) -> Mailbox? {
         var dbMailbox: Mailbox? = nil
-        let uuidField = Expression<String>("uuid")
-        let query = self.mailboxesTable.filter(uuidField == uuid).limit(1)
+        let query = Mailbox(uuid: uuid).selectQuery()
         
         do {
             for selectedMailbox in try self.db!.prepare(query) {
-                dbMailbox = Mailbox()
-                dbMailbox?.deviceId = "nigga"
-                print(selectedMailbox)
+                dbMailbox = Mailbox(uuid: uuid)
+                dbMailbox?.parseRow(selectedMailbox)
             }
         } catch {
         }

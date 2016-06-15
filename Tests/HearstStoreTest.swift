@@ -32,4 +32,23 @@ class HearstStoreTest: XCTestCase {
         
         XCTAssert(mailbox == nil,"Expected mailbox to be nil for empty database but something returned")
     }
+    
+    func testInsertAndSelect() {
+        let someUuid = NSUUID().UUIDString.lowercaseString
+        let mb = Mailbox(uuid: someUuid)
+        mb.deviceId = "hello-world"
+        mb.connectedAt = NSDate()
+        
+        let err = db.createMailbox(mb) { mbx in
+            print(mbx)
+        }
+        
+        XCTAssert(err == nil,"Expected mailbox db create to be bil but got: " + err!.localizedDescription)
+        
+        let mbz = db.getMailbox(someUuid) { mbx in
+            print(mbx)
+        }
+        
+        XCTAssert(mbz?.deviceId == mb.deviceId,"Expected store to retrieve device id from db but it did not")
+    }
 }
