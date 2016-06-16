@@ -171,6 +171,12 @@ public class Mailbox {
         return String(data: self.payloadData(), encoding: NSUTF8StringEncoding)!
     }
     
+    public func selectQuery() -> Table {
+        let uuidField = Expression<String>("uuid")
+        let selectQuery = self.dbTable.filter(uuidField == self.uuid).limit(1)
+        return selectQuery
+    }
+    
     public func insertQuery() -> Insert {
         let uuid = Expression<String>("uuid")
         let publicKey = Expression<String>("public_key")
@@ -192,10 +198,31 @@ public class Mailbox {
         return insertQuery
     }
     
-    public func selectQuery() -> Table {
-        let uuidField = Expression<String>("uuid")
-        let selectQuery = self.dbTable.filter(uuidField == self.uuid).limit(1)
-        return selectQuery
+    public func updateQuery() -> Update {
+        let uuid = Expression<String>("uuid")
+        let publicKey = Expression<String>("public_key")
+        let deviceId = Expression<String>("device_id")
+        let downloadedAt = Expression<Int64>("downloaded_at")
+        let connectedAt = Expression<Int64>("connected_at")
+        let createdAt = Expression<Int64>("created_at")
+        let updatedAt = Expression<Int64>("updated_at")
+        
+        let updateQuery = self.selectQuery().update(
+            uuid <- self.uuid,
+            publicKey <- self.publicKeyString,
+            deviceId <- self.deviceId,
+            downloadedAt <- Int64(NSDate().timeIntervalSince1970),
+            connectedAt <- Int64(self.connectedAt.timeIntervalSince1970),
+            createdAt <- Int64(self.createdAt.timeIntervalSince1970),
+            updatedAt <- Int64(self.updatedAt.timeIntervalSince1970)
+        )
+        return updateQuery
+    }
+    
+    public func deleteQuery() -> Delete {
+        let uuid = Expression<String>("uuid")
+        let deleteQuery = self.dbTable.filter(uuid == self.uuid).delete()
+        return deleteQuery
     }
     
     public func parseRow(row: Row) {

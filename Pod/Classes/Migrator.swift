@@ -150,6 +150,7 @@ public class Migrator {
         do {
             try db.run(threads.create() { t in
                 t.column(Expression<Int64>("id"),primaryKey: true)
+                t.column(Expression<String>("uuid"))
                 t.column(Expression<String>("identifier"))
                 t.column(Expression<String>("domain"))
                 t.column(Expression<String>("subject"))
@@ -200,6 +201,7 @@ public class Migrator {
         do {
             try db.run(messages.create() { t in
                 t.column(Expression<Int64>("id"),primaryKey: true)
+                t.column(Expression<String>("uuid"))
                 t.column(Expression<String>("thread_id"))
                 t.column(Expression<String>("sender_id"))
                 t.column(Expression<Int64>("created_at"))

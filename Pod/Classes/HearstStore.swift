@@ -49,8 +49,13 @@ public class HearstStore {
             dbErr = err
         }
         
-        self.server?.createMailbox(mb) { (smb) in
-            // update db record
+        self.server?.createMailbox(mb) { smb in
+            let updateQuery = smb.updateQuery()
+            do {
+                try self.db?.run(updateQuery)
+            } catch {
+            }
+            
             callback(smb)
         }
         
@@ -70,10 +75,148 @@ public class HearstStore {
         }
         
         self.server?.getMailbox(uuid) { mb in
-            // insert or update mailbox
+            if dbMailbox != nil {
+                let query = mb.updateQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            } else {
+                let query = mb.insertQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            }
             callback(mb)
         }
         
         return dbMailbox
     }
+    
+    public func updateMailbox(mb: Mailbox, callback: (Mailbox) -> ()) -> NSError? {
+        let updateQuery = mb.updateQuery()
+        var dbErr: NSError? = nil
+        do {
+            try self.db?.run(updateQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.updateMailbox(mb) { smb in
+            let serverUpdateQuery = smb.updateQuery()
+            do {
+                try self.db?.run(serverUpdateQuery)
+            } catch {
+            }
+            
+            callback(smb)
+        }
+        
+        return dbErr
+    }
+    
+    public func deleteMailbox(mb: Mailbox, callback: (Mailbox) -> ()) -> NSError? {
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(mb.deleteQuery())
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.deleteMailbox(mb) { callback($0) }
+        return dbErr
+    }
+    
+    public func createThread(tr: Thread, callback: (Thread) -> ()) -> NSError? {
+        let insertQuery = tr.insertQuery()
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(insertQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.createThread(tr) { str in
+            let updateQuery = str.updateQuery()
+            do {
+                try self.db?.run(updateQuery)
+            } catch {
+            }
+            
+            callback(str)
+        }
+        
+        return dbErr
+    }
+    
+    public func getThread(uuid: String, callback: (Thread) -> ()) -> Thread? {
+        var dbThread: Thread? = nil
+        let query = Thread(uuid: uuid).selectQuery()
+        
+        do {
+            for selectedThread in try self.db!.prepare(query) {
+                dbThread = Thread(uuid: uuid)
+                dbThread?.parseRow(selectedThread)
+            }
+        } catch {
+        }
+        
+        self.server?.getThread(uuid) { tr in
+            if dbThread != nil {
+                let query = tr.updateQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            } else {
+                let query = tr.insertQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            }
+            callback(tr)
+        }
+        
+        return dbThread
+    }
+    
+    public func updateThread(tr: Thread, callback: (Thread) -> ()) -> NSError? {
+        let updateQuery = tr.updateQuery()
+        var dbErr: NSError? = nil
+        do {
+            try self.db?.run(updateQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.updateThread(tr) { str in
+            let serverUpdateQuery = str.updateQuery()
+            do {
+                try self.db?.run(serverUpdateQuery)
+            } catch {
+            }
+            
+            callback(str)
+        }
+        
+        return dbErr
+    }
+    
+    public func deleteThread(tr: Thread, callback: (Thread) -> ()) -> NSError? {
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(tr.deleteQuery())
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.deleteThread(tr) { callback($0) }
+        return dbErr
+    }
+
 }
