@@ -64,7 +64,6 @@ class HearstStoreTest: XCTestCase {
     
     func testUpdate() {
         let someUuid = NSUUID().UUIDString.lowercaseString
-        print(someUuid)
         let mb = Mailbox(uuid: someUuid)
         mb.deviceId = "hello-world"
         mb.connectedAt = NSDate()
@@ -111,5 +110,54 @@ class HearstStoreTest: XCTestCase {
                 XCTFail("Server never returned from get mailbox command")
             }
         }
+    }
+    
+    func testDelete() {
+        let someUuid = NSUUID().UUIDString.lowercaseString
+        let mb = Mailbox(uuid: someUuid)
+        
+        let result = db.getMailbox(someUuid) { smb in
+        }
+        XCTAssert(result == nil,"Expected get mailbox to return nil for mailbox that hasn't been created yet")
+        
+        let createExpectation = self.expectationWithDescription("Server saved mailbox")
+        let err = db.createMailbox(mb) { smb in
+            createExpectation.fulfill()
+        }
+        
+        XCTAssert(err == nil,"Expected mailbox to insert but got error")
+        self.waitForExpectationsWithTimeout(5.0) { (err) in
+            if err != nil {
+                XCTFail("Error waiting for mailbox create response: \(err?.localizedDescription)")
+            }
+        }
+        
+        let getExpectation = self.expectationWithDescription("Server got mailbox")
+        let newResult = db.getMailbox(someUuid) { smb in
+            XCTAssert(smb.uuid == someUuid,"Expected mailbox in callback to have same UUID")
+            getExpectation.fulfill()
+        }
+        XCTAssert(newResult != nil,"expected mailbox to be saved in database, but got nil")
+        
+        self.waitForExpectationsWithTimeout(5.0) { (err) in
+            if err != nil {
+                XCTFail("Error waiting for mailbox get response: \(err?.localizedDescription)")
+            }
+        }
+        
+        let deleteExpectation = self.expectationWithDescription("Server completed delete")
+        let deleteErr = db.deleteMailbox(mb) { smb in
+            deleteExpectation.fulfill()
+        }
+        XCTAssert(deleteErr == nil,"Attempt to delete mailbox from database returned error: \(deleteErr!.localizedDescription)")
+        self.waitForExpectationsWithTimeout(5.0) { (err) in
+            if err != nil {
+                XCTFail("Error waiting for mailbox delete response: \(err?.localizedDescription)")
+            }
+        }
+        
+        let finalResult = db.getMailbox(someUuid) { smb in
+        }
+        XCTAssert(finalResult == nil,"Expected mailbox to be deleted but found non-nil object")
     }
 }
