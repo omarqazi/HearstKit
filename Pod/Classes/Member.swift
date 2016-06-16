@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import SQLite
 
 public class Member {
     public var threadId: String = ""
@@ -16,6 +17,7 @@ public class Member {
     public var allowWrite: Bool = false
     public var allowNotification: Bool = false
     public var serverConnection:  Connection?
+    public var dbTable = Table("thread_members")
 
     
     public convenience init(json: JSON) {
@@ -55,5 +57,37 @@ public class Member {
         if let allowNotification = json["AllowNotification"].bool {
             self.allowNotification = allowNotification
         }
+    }
+    
+    public func insertQuery() -> Insert {
+        let insertQuery = self.dbTable.insert(
+            Expression<String>("thread_id") <- self.threadId,
+            Expression<String>("mailbox_id") <- self.mailboxId,
+            Expression<Bool>("allow_read") <- self.allowRead,
+            Expression<Bool>("allow_write") <- self.allowWrite,
+            Expression<Bool>("allow_notification") <- self.allowNotification
+        )
+        return insertQuery
+    }
+    
+    public func selectQuery() -> Table {
+        let selectQuery = dbTable.filter(Expression<String>("thread_id") == self.threadId).filter(Expression<String>("mailbox_id") == self.mailboxId).limit(1)
+        return selectQuery
+    }
+    
+    public func updateQuery() -> Update {
+        let updateQuery = self.selectQuery().update(
+            Expression<String>("thread_id") <- self.threadId,
+            Expression<String>("mailbox_id") <- self.mailboxId,
+            Expression<Bool>("allow_read") <- self.allowRead,
+            Expression<Bool>("allow_write") <- self.allowWrite,
+            Expression<Bool>("allow_notification") <- self.allowNotification
+        )
+        return updateQuery
+    }
+    
+    public func deleteQuery() -> Delete {
+        let deleteQuery = self.selectQuery().delete()
+        return deleteQuery
     }
 }

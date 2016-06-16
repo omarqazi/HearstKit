@@ -218,5 +218,32 @@ public class HearstStore {
         self.server?.deleteThread(tr) { callback($0) }
         return dbErr
     }
+    
+    public func createThread(tr: Thread, callback: (Thread) -> ()) -> NSError? {
+        let insertQuery = tr.insertQuery()
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(insertQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.createThread(tr) { str in
+            let updateQuery = str.updateQuery()
+            do {
+                try self.db?.run(updateQuery)
+            } catch {
+            }
+            
+            callback(str)
+        }
+        
+        return dbErr
+    }
+    
+    public func createMember(mem: Member, callback: (Member) -> ()) -> NSError? {
+        
+    }
 
 }
