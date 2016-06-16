@@ -167,7 +167,7 @@ public class Connection {
     
     public func createMailbox(mb: Mailbox, callback: (Mailbox) -> ()) {
         self.createModel("mailbox", payload: mb.serverRepresentation()) { (json) -> (Bool) in
-            let mb = Mailbox(json: json)
+            let mb = Mailbox(json: json["payload"])
             mb.serverConnection = self
             callback(mb)
             return true
@@ -176,7 +176,7 @@ public class Connection {
     
     public func createThread(tr: Thread, callback: (Thread) -> ()) {
         self.createModel("thread", payload: tr.serverRepresentation()) { (json) -> (Bool) in
-            let tr = Thread(json: json)
+            let tr = Thread(json: json["payload"])
             tr.serverConnection = self
             callback(tr)
             return true
@@ -185,7 +185,7 @@ public class Connection {
     
     public func createMember(mem: Member, callback: (Member) -> ()) {
         self.createModel("threadmember", payload: mem.serverRepresentation()) { (json) -> (Bool) in
-            let mem = Member(json: json)
+            let mem = Member(json: json["payload"])
             mem.serverConnection = self
             callback(mem)
             return true
@@ -194,7 +194,7 @@ public class Connection {
     
     public func createMessage(msg: Message, callback: (Message) -> ()) {
         self.createModel("message", payload: msg.serverRepresentation()) { (json) -> (Bool) in
-            let msg = Message(json: json)
+            let msg = Message(json: json["payload"])
             msg.serverConnection = self
             callback(msg)
             return true
