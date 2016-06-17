@@ -19,10 +19,15 @@ public class Member {
     public var serverConnection:  Connection?
     public var dbTable = Table("thread_members")
 
-    
     public convenience init(json: JSON) {
         self.init()
         self.parse(json)
+    }
+    
+    public convenience init(threadId: String, mailboxId: String) {
+        self.init()
+        self.threadId = threadId
+        self.mailboxId = mailboxId
     }
     
     public func serverRepresentation() -> [String : AnyObject] {
@@ -57,6 +62,14 @@ public class Member {
         if let allowNotification = json["AllowNotification"].bool {
             self.allowNotification = allowNotification
         }
+    }
+    
+    public func parseRow(row: Row) {
+        self.threadId = row[Expression<String>("thread_id")]
+        self.mailboxId = row[Expression<String>("mailbox_id")]
+        self.allowRead = row[Expression<Bool>("allow_read")]
+        self.allowWrite = row[Expression<Bool>("allow_write")]
+        self.allowNotification = row[Expression<Bool>("allow_notification")]
     }
     
     public func insertQuery() -> Insert {

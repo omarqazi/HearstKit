@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftyJSON
-
+import SQLite
 var relativeDateFormatter: NSDateFormatter?
 
 public class Message {
@@ -21,7 +21,34 @@ public class Message {
     public var threadId: String = ""
     public var senderId: String = ""
     public var createdAt: NSDate = NSDate.distantPast()
+    public var expiresAt: NSDate = NSDate.distantFuture()
+    public var dbTable = Table("messages")
     public var serverConnection:  Connection?
+    var sqlValues: [Setter] {
+        var rawLabels = self.labels.rawString()
+        var rawPayload = self.payload.rawString()
+        
+        if rawLabels == nil {
+            rawLabels = "{}"
+        }
+        if rawPayload == nil {
+            rawPayload = "{}"
+        }
+        
+        let setters = [
+            Expression<String>("uuid") <- self.uuid,
+            Expression<String>("thread_id") <- self.threadId,
+            Expression<String>("sender_id") <- self.senderId,
+            Expression<Int64>("created_at") <- Int64(self.createdAt.timeIntervalSince1970),
+            Expression<Int64>("expires_at") <- Int64(self.expiresAt.timeIntervalSince1970),
+            Expression<String>("topic") <- self.topic,
+            Expression<String>("body") <- self.body,
+            Expression<String>("labels") <- rawLabels!,
+            Expression<String>("payload") <- rawPayload!,
+            Expression<Int64>("index") <- self.index
+        ]
+        return setters
+    }
     var dateFormatter: NSDateFormatter {
         if relativeDateFormatter == nil {
             relativeDateFormatter = NSDateFormatter()
@@ -31,6 +58,11 @@ public class Message {
             relativeDateFormatter?.doesRelativeDateFormatting = true
         }
         return relativeDateFormatter!
+    }
+    
+    public convenience init(uuid: String) {
+        self.init()
+        self.uuid = uuid
     }
     
     public convenience init(body: String) {
@@ -121,5 +153,40 @@ public class Message {
                 self.createdAt = createdDate
             }
         }
+    }
+    
+    public func parseRow(row: Row) {
+        self.uuid = row[Expression<String>("uuid")]
+        self.threadId = row[Expression<String>("thread_id")]
+        self.senderId = row[Expression<String>("sender_id")]
+        self.createdAt = NSDate(timeIntervalSince1970: NSTimeInterval(row[Expression<Int64>("created_at")]))
+        self.expiresAt = NSDate(timeIntervalSince1970: NSTimeInterval(row[Expression<Int64>("expires_at")]))
+        self.topic = row[Expression<String>("topic")]
+        self.body = row[Expression<String>("body")]
+        let labelData = row[Expression<String>("labels")].dataUsingEncoding(NSUTF8StringEncoding)
+        let payloadData = row[Expression<String>("payload")].dataUsingEncoding(NSUTF8StringEncoding)
+        if let ld = labelData {
+            self.labels = JSON(data: ld)
+        }
+        if let pd = payloadData {
+            self.payload = JSON(data: pd)
+        }
+        self.index = row[Expression<Int64>("index")]
+    }
+    
+    public func insertQuery() -> Insert {
+        return self.dbTable.insert(self.sqlValues)
+    }
+    
+    public func selectQuery() -> Table {
+        return self.dbTable.filter(Expression<String>("uuid") == self.uuid).limit(1)
+    }
+    
+    public func updateQuery() -> Update {
+        return self.dbTable.update(self.sqlValues)
+    }
+    
+    public func deleteQuery() -> Delete {
+        return self.selectQuery().delete()
     }
 }

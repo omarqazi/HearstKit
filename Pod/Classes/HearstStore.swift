@@ -219,8 +219,8 @@ public class HearstStore {
         return dbErr
     }
     
-    public func createThread(tr: Thread, callback: (Thread) -> ()) -> NSError? {
-        let insertQuery = tr.insertQuery()
+    public func createMember(mem: Member, callback: (Member) -> ()) -> NSError? {
+        let insertQuery = mem.insertQuery()
         var dbErr: NSError? = nil
         
         do {
@@ -229,21 +229,129 @@ public class HearstStore {
             dbErr = err
         }
         
-        self.server?.createThread(tr) { str in
-            let updateQuery = str.updateQuery()
+        self.server?.createMember(mem) { smem in
+            let updateQuery = mem.updateQuery()
             do {
                 try self.db?.run(updateQuery)
             } catch {
             }
             
-            callback(str)
+            callback(smem)
         }
         
         return dbErr
     }
     
-    public func createMember(mem: Member, callback: (Member) -> ()) -> NSError? {
+    public func getMember(threadId: String, mailboxId: String,callback: (Member) -> ()) -> Member? {
+        var dbMember: Member? = nil
+        let query = Member(threadId: threadId, mailboxId: mailboxId).selectQuery()
         
+        do {
+            for selectedMember in try self.db!.prepare(query) {
+                dbMember = Member(threadId: threadId, mailboxId: mailboxId)
+                dbMember!.parseRow(selectedMember)
+            }
+        } catch {
+        }
+        
+        self.server?.getMember(threadId, mailboxId: mailboxId) { smem in
+            if dbMember == nil { // insert new record
+                let query = smem.insertQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            } else { // update existing record
+                let query = smem.updateQuery()
+                do {
+                    try self.db?.run(query)
+                } catch {
+                }
+            }
+        }
+        
+        return dbMember
     }
-
+    
+    public func updateMember(mem: Member, callback: (Member) -> ()) -> NSError? {
+        let updateQuery = mem.updateQuery()
+        var dbErr: NSError? = nil
+        do {
+            try self.db?.run(updateQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.updateMember(mem) { smem in
+            let serverUpdateQuery = smem.updateQuery()
+            do {
+                try self.db?.run(serverUpdateQuery)
+            } catch {
+            }
+            
+            callback(smem)
+        }
+        
+        return dbErr
+    }
+    
+    public func deleteMember(mem: Member, callback: (Member) -> ()) -> NSError? {
+        var dbErr: NSError? = nil
+        
+        do {
+            try self.db?.run(mem.deleteQuery())
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        self.server?.deleteMember(mem) { callback($0) }
+        return dbErr
+    }
+    
+    public func createMessage(msg: Message, callback: (Message) -> ()) -> NSError? {
+        let insertQuery = msg.insertQuery()
+        var dbErr: NSError? = nil
+        
+        do {
+            try db?.run(insertQuery)
+        } catch let err as NSError {
+            dbErr = err
+        }
+        
+        server?.createMessage(msg) { smsg in
+            let updateQuery = smsg.updateQuery()
+            do {
+                try self.db?.run(updateQuery)
+            } catch {
+            }
+            
+            callback(smsg)
+        }
+        
+        return dbErr
+    }
+    
+    // Unlike other models messages can't be updated so once we save them theres no need
+    // to get updates from the server in the future
+    public func getMessage(uuid: String, callback: (Message) -> ()) -> Message? {
+        do {
+            for selectedMessage in try db!.prepare(Message(uuid: uuid).selectQuery()) {
+                let dbMessage = Message(uuid: uuid)
+                dbMessage.parseRow(selectedMessage)
+                return dbMessage // skip server request
+            }
+        } catch {
+        }
+        
+        server?.getMessage(uuid) { smsg in
+            do {
+                try self.db?.run(smsg.insertQuery())
+            } catch {
+            }
+            
+            callback(smsg)
+        }
+        
+        return nil
+    }
 }
